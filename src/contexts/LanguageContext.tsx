@@ -1,0 +1,300 @@
+'use client';
+
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { getNestedValue, formatString } from '@/utils/i18n';
+
+// Define available languages
+export type Language = 'ar' | 'en';
+
+// Define the context type
+type LanguageContextType = {
+  language: Language;
+  setLanguage: (language: Language) => void;
+  t: (key: string, variables?: Record<string, any>) => string;
+  formatDate: (date: Date, options?: Intl.DateTimeFormatOptions) => string;
+  formatNumber: (num: number, options?: Intl.NumberFormatOptions) => string;
+  formatCurrency: (amount: number, currency?: string) => string;
+  getLocale: () => string;
+};
+
+// Create the context
+const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
+
+// Translations with nested structure
+const translations = {
+  ar: {
+    app: {
+      name: 'نظام إدارة المدرسة',
+      description: 'حل شامل لإدارة الطلاب والمعلمين والدورات والمزيد',
+      signIn: 'تسجيل الدخول',
+      signUp: 'إنشاء حساب',
+      signOut: 'تسجيل الخروج',
+      dashboard: 'لوحة التحكم',
+      students: 'الطلاب',
+      teachers: 'المعلمين',
+      courses: 'الدورات',
+      schedule: 'الجدول',
+      attendance: 'الحضور',
+      language: 'اللغة',
+      english: 'English',
+      arabic: 'العربية',
+      welcome: 'مرحبًا، {name}!'
+    },
+    auth: {
+      email: 'البريد الإلكتروني',
+      password: 'كلمة المرور',
+      confirmPassword: 'تأكيد كلمة المرور',
+      dontHaveAccount: 'ليس لديك حساب؟',
+      alreadyHaveAccount: 'لديك حساب بالفعل؟',
+      signingIn: 'جاري تسجيل الدخول...',
+      signingUp: 'جاري إنشاء الحساب...',
+      forgotPassword: 'نسيت كلمة المرور؟',
+      resetPassword: 'إعادة تعيين كلمة المرور',
+      verifyEmail: 'تحقق من بريدك الإلكتروني'
+    },
+    dashboard: {
+      stats: {
+        students: 'الطلاب',
+        teachers: 'المعلمين',
+        courses: 'الدورات',
+        classes: 'الفصول'
+      },
+      recentActivities: 'الأنشطة الأخيرة',
+      upcomingEvents: 'الأحداث القادمة',
+      quickActions: 'إجراءات سريعة',
+      viewAll: 'عرض الكل'
+    },
+    students: {
+      addStudent: 'إضافة طالب',
+      searchStudents: 'البحث عن طلاب...',
+      name: 'الاسم',
+      grade: 'الصف',
+      email: 'البريد الإلكتروني',
+      phone: 'الهاتف',
+      actions: 'الإجراءات',
+      gradeLevel: 'الصف',
+      deleteConfirm: 'هل أنت متأكد أنك تريد حذف هذا الطالب؟',
+      deleteSuccess: 'تم حذف الطالب بنجاح',
+      editStudent: 'تعديل بيانات الطالب',
+      studentDetails: 'تفاصيل الطالب',
+      personalInfo: 'المعلومات الشخصية',
+      academicInfo: 'المعلومات الأكاديمية',
+      contactInfo: 'معلومات الاتصال',
+      dateOfBirth: 'تاريخ الميلاد',
+      address: 'العنوان',
+      parentInfo: 'معلومات ولي الأمر'
+    },
+    features: {
+      title: 'الميزات الرئيسية',
+      studentManagement: 'إدارة الطلاب',
+      studentManagement_desc: 'إدارة معلومات الطلاب والحضور والأداء الأكاديمي بسهولة',
+      teacherManagement: 'إدارة المعلمين',
+      teacherManagement_desc: 'إدارة ملفات المعلمين والجداول وتعيينات الدورات بكفاءة',
+      courseManagement: 'إدارة الدورات',
+      courseManagement_desc: 'إنشاء وإدارة الدورات والواجبات والموارد التعليمية',
+      scheduleManagement: 'إدارة الجداول',
+      scheduleManagement_desc: 'تنظيم وتتبع جداول الفصول والأحداث والتقويم الأكاديمي'
+    },
+    common: {
+      save: 'حفظ',
+      cancel: 'إلغاء',
+      edit: 'تعديل',
+      delete: 'حذف',
+      view: 'عرض',
+      search: 'بحث',
+      filter: 'تصفية',
+      sort: 'ترتيب',
+      loading: 'جاري التحميل...',
+      noResults: 'لا توجد نتائج',
+      error: 'حدث خطأ',
+      success: 'تم بنجاح',
+      confirm: 'تأكيد',
+      back: 'رجوع',
+      next: 'التالي',
+      previous: 'السابق'
+    }
+  },
+  en: {
+    app: {
+      name: 'School Management System',
+      description: 'A comprehensive solution for managing students, teachers, courses, and more',
+      signIn: 'Sign In',
+      signUp: 'Sign Up',
+      signOut: 'Sign Out',
+      dashboard: 'Dashboard',
+      students: 'Students',
+      teachers: 'Teachers',
+      courses: 'Courses',
+      schedule: 'Schedule',
+      attendance: 'Attendance',
+      language: 'Language',
+      english: 'English',
+      arabic: 'العربية',
+      welcome: 'Welcome, {name}!'
+    },
+    auth: {
+      email: 'Email',
+      password: 'Password',
+      confirmPassword: 'Confirm Password',
+      dontHaveAccount: 'Don\'t have an account?',
+      alreadyHaveAccount: 'Already have an account?',
+      signingIn: 'Signing in...',
+      signingUp: 'Signing up...',
+      forgotPassword: 'Forgot Password?',
+      resetPassword: 'Reset Password',
+      verifyEmail: 'Verify Your Email'
+    },
+    dashboard: {
+      stats: {
+        students: 'Students',
+        teachers: 'Teachers',
+        courses: 'Courses',
+        classes: 'Classes'
+      },
+      recentActivities: 'Recent Activities',
+      upcomingEvents: 'Upcoming Events',
+      quickActions: 'Quick Actions',
+      viewAll: 'View All'
+    },
+    students: {
+      addStudent: 'Add Student',
+      searchStudents: 'Search students...',
+      name: 'Name',
+      grade: 'Grade',
+      email: 'Email',
+      phone: 'Phone',
+      actions: 'Actions',
+      gradeLevel: 'Grade',
+      deleteConfirm: 'Are you sure you want to delete this student?',
+      deleteSuccess: 'Student deleted successfully',
+      editStudent: 'Edit Student',
+      studentDetails: 'Student Details',
+      personalInfo: 'Personal Information',
+      academicInfo: 'Academic Information',
+      contactInfo: 'Contact Information',
+      dateOfBirth: 'Date of Birth',
+      address: 'Address',
+      parentInfo: 'Parent Information'
+    },
+    features: {
+      title: 'Key Features',
+      studentManagement: 'Student Management',
+      studentManagement_desc: 'Easily manage student information, attendance, and academic performance',
+      teacherManagement: 'Teacher Management',
+      teacherManagement_desc: 'Manage teacher profiles, schedules, and course assignments efficiently',
+      courseManagement: 'Course Management',
+      courseManagement_desc: 'Create and manage courses, assignments, and educational resources',
+      scheduleManagement: 'Schedule Management',
+      scheduleManagement_desc: 'Organize and track class schedules, events, and academic calendar'
+    },
+    common: {
+      save: 'Save',
+      cancel: 'Cancel',
+      edit: 'Edit',
+      delete: 'Delete',
+      view: 'View',
+      search: 'Search',
+      filter: 'Filter',
+      sort: 'Sort',
+      loading: 'Loading...',
+      noResults: 'No results found',
+      error: 'An error occurred',
+      success: 'Success',
+      confirm: 'Confirm',
+      back: 'Back',
+      next: 'Next',
+      previous: 'Previous'
+    }
+  }
+};
+
+// Map languages to locales
+const localeMap: Record<Language, string> = {
+  ar: 'ar-SA',
+  en: 'en-US'
+};
+
+// Provider component
+export function LanguageProvider({ children }: { children: React.ReactNode }) {
+  // Default to Arabic based on user preference
+  const [language, setLanguageState] = useState<Language>('ar');
+
+  // Set language and save to localStorage
+  const setLanguage = (newLanguage: Language) => {
+    setLanguageState(newLanguage);
+    localStorage.setItem('language', newLanguage);
+
+    // Set the dir attribute on the html element for RTL support
+    document.documentElement.dir = newLanguage === 'ar' ? 'rtl' : 'ltr';
+
+    // Add or remove RTL class for styling
+    if (newLanguage === 'ar') {
+      document.documentElement.classList.add('rtl');
+    } else {
+      document.documentElement.classList.remove('rtl');
+    }
+  };
+
+  // Get translation for a key with variable substitution
+  const t = (key: string, variables?: Record<string, any>): string => {
+    const translatedText = getNestedValue(translations[language], key, key);
+    return variables ? formatString(translatedText, variables) : translatedText;
+  };
+
+  // Get current locale
+  const getLocale = (): string => {
+    return localeMap[language];
+  };
+
+  // Format date according to current locale
+  const formatDate = (date: Date, options?: Intl.DateTimeFormatOptions): string => {
+    return new Intl.DateTimeFormat(getLocale(), options).format(date);
+  };
+
+  // Format number according to current locale
+  const formatNumber = (num: number, options?: Intl.NumberFormatOptions): string => {
+    return new Intl.NumberFormat(getLocale(), options).format(num);
+  };
+
+  // Format currency according to current locale
+  const formatCurrency = (amount: number, currency: string = 'USD'): string => {
+    return new Intl.NumberFormat(getLocale(), {
+      style: 'currency',
+      currency,
+    }).format(amount);
+  };
+
+  // Initialize language from localStorage on client side
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem('language') as Language;
+    if (savedLanguage && (savedLanguage === 'ar' || savedLanguage === 'en')) {
+      setLanguage(savedLanguage);
+    } else {
+      // Default to Arabic
+      setLanguage('ar');
+    }
+  }, []);
+
+  return (
+    <LanguageContext.Provider value={{
+      language,
+      setLanguage,
+      t,
+      formatDate,
+      formatNumber,
+      formatCurrency,
+      getLocale
+    }}>
+      {children}
+    </LanguageContext.Provider>
+  );
+}
+
+// Hook to use the language context
+export function useLanguage() {
+  const context = useContext(LanguageContext);
+  if (context === undefined) {
+    throw new Error('useLanguage must be used within a LanguageProvider');
+  }
+  return context;
+}
