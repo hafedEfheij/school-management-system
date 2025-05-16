@@ -11,7 +11,7 @@ type MainLayoutProps = {
 };
 
 const MainLayout = ({ children }: MainLayoutProps) => {
-  const { user, signOut } = useAuth();
+  const { user, logout, isAuthenticated } = useAuth();
   const { t, language } = useLanguage();
   const rtl = useRtl();
 
@@ -66,14 +66,14 @@ const MainLayout = ({ children }: MainLayoutProps) => {
             <h2 className="text-xl font-semibold">{t('app.name')}</h2>
             <div className="flex items-center gap-4">
               <LanguageSwitcher />
-              {user ? (
+              {isAuthenticated ? (
                 <div className={`flex items-center gap-4 ${rtl.flexDirection()}`}>
                   <div className="flex items-center">
                     <FaUser className={rtl.margin('left', 2)} />
-                    <span>{user.email}</span>
+                    <span>{user?.email}</span>
                   </div>
                   <button
-                    onClick={() => signOut()}
+                    onClick={() => logout()}
                     className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
                   >
                     {t('app.signOut')}
@@ -81,7 +81,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                 </div>
               ) : (
                 <Link
-                  href="/auth/signin"
+                  href="/login"
                   className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
                 >
                   {t('app.signIn')}

@@ -53,6 +53,14 @@ export function getTextAlignClass(isRtl: boolean): string {
 }
 
 /**
+ * Returns the opposite text alignment class based on language
+ * @param isRtl Whether the current language is RTL
+ */
+export function getOppositeTextAlignClass(isRtl: boolean): string {
+  return isRtl ? 'text-left' : 'text-right';
+}
+
+/**
  * Returns the appropriate flex direction class based on language
  * @param isRtl Whether the current language is RTL
  */
@@ -85,7 +93,7 @@ export function getRoundedClass(corner: 'top-left' | 'top-right' | 'bottom-left'
     'bottom-left': isRtl ? 'rounded-br' : 'rounded-bl',
     'bottom-right': isRtl ? 'rounded-bl' : 'rounded-br',
   };
-  
+
   return cornerMap[corner];
 }
 
@@ -97,8 +105,9 @@ export function createRtlUtils(isRtl: boolean) {
   return {
     margin: (direction: 'left' | 'right', size: number) => getMarginClass(direction, size, isRtl),
     padding: (direction: 'left' | 'right', size: number) => getPaddingClass(direction, size, isRtl),
-    position: (position: 'left' | 'right', size: number) => getPositionClass(position, size, isRtl),
+    position: (position: 'left' | 'right', size: number = 0) => getPositionClass(position, size, isRtl),
     textAlign: () => getTextAlignClass(isRtl),
+    oppositeTextAlign: () => getOppositeTextAlignClass(isRtl),
     flexDirection: () => getFlexDirectionClass(isRtl),
     border: (direction: 'left' | 'right') => getBorderClass(direction, isRtl),
     rounded: (corner: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right') => getRoundedClass(corner, isRtl),
