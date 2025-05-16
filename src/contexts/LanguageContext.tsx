@@ -112,7 +112,12 @@ const translations = {
       confirm: 'تأكيد',
       back: 'رجوع',
       next: 'التالي',
-      previous: 'السابق'
+      previous: 'السابق',
+      name: 'الاسم',
+      first: 'الأول',
+      second: 'الثاني',
+      third: 'الثالث',
+      rtlExample: 'هذا مثال على النص المكتوب من اليمين إلى اليسار. يتم عرضه بشكل صحيح في واجهة المستخدم.'
     }
   },
   en: {
@@ -205,7 +210,12 @@ const translations = {
       confirm: 'Confirm',
       back: 'Back',
       next: 'Next',
-      previous: 'Previous'
+      previous: 'Previous',
+      name: 'Name',
+      first: 'First',
+      second: 'Second',
+      third: 'Third',
+      rtlExample: 'This is an example of left-to-right text. It is displayed correctly in the user interface.'
     }
   },
   fr: {
@@ -298,7 +308,12 @@ const translations = {
       confirm: 'Confirmer',
       back: 'Retour',
       next: 'Suivant',
-      previous: 'Précédent'
+      previous: 'Précédent',
+      name: 'Nom',
+      first: 'Premier',
+      second: 'Deuxième',
+      third: 'Troisième',
+      rtlExample: 'Ceci est un exemple de texte de gauche à droite. Il est affiché correctement dans l\'interface utilisateur.'
     }
   }
 };
