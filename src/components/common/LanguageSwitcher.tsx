@@ -53,6 +53,19 @@ export default function LanguageSwitcher() {
           <div className="py-1">
             <button
               onClick={() => {
+                setLanguage('ar');
+                setIsOpen(false);
+              }}
+              className={`flex items-center justify-between w-full text-left px-4 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors ${
+                language === 'ar' ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' : ''
+              }`}
+              role="menuitem"
+            >
+              <span>{t('app.arabic')}</span>
+              {language === 'ar' && <FaCheck className="text-blue-500" />}
+            </button>
+            <button
+              onClick={() => {
                 setLanguage('en');
                 setIsOpen(false);
               }}
@@ -66,16 +79,16 @@ export default function LanguageSwitcher() {
             </button>
             <button
               onClick={() => {
-                setLanguage('ar');
+                setLanguage('fr');
                 setIsOpen(false);
               }}
               className={`flex items-center justify-between w-full text-left px-4 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors ${
-                language === 'ar' ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' : ''
+                language === 'fr' ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' : ''
               }`}
               role="menuitem"
             >
-              <span>{t('app.arabic')}</span>
-              {language === 'ar' && <FaCheck className="text-blue-500" />}
+              <span>{t('app.french')}</span>
+              {language === 'fr' && <FaCheck className="text-blue-500" />}
             </button>
           </div>
         </div>

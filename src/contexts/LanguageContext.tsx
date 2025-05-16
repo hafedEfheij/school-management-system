@@ -4,7 +4,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { getNestedValue, formatString } from '@/utils/i18n';
 
 // Define available languages
-export type Language = 'ar' | 'en';
+export type Language = 'ar' | 'en' | 'fr';
 
 // Define the context type
 type LanguageContextType = {
@@ -38,6 +38,7 @@ const translations = {
       language: 'اللغة',
       english: 'English',
       arabic: 'العربية',
+      french: 'Français',
       welcome: 'مرحبًا، {name}!'
     },
     auth: {
@@ -130,6 +131,7 @@ const translations = {
       language: 'Language',
       english: 'English',
       arabic: 'العربية',
+      french: 'Français',
       welcome: 'Welcome, {name}!'
     },
     auth: {
@@ -205,13 +207,107 @@ const translations = {
       next: 'Next',
       previous: 'Previous'
     }
+  },
+  fr: {
+    app: {
+      name: 'Système de Gestion Scolaire',
+      description: 'Une solution complète pour gérer les étudiants, les enseignants, les cours et plus encore',
+      signIn: 'Se Connecter',
+      signUp: 'S\'inscrire',
+      signOut: 'Se Déconnecter',
+      dashboard: 'Tableau de Bord',
+      students: 'Étudiants',
+      teachers: 'Enseignants',
+      courses: 'Cours',
+      schedule: 'Emploi du Temps',
+      attendance: 'Présence',
+      language: 'Langue',
+      english: 'English',
+      arabic: 'العربية',
+      french: 'Français',
+      welcome: 'Bienvenue, {name}!'
+    },
+    auth: {
+      email: 'Email',
+      password: 'Mot de passe',
+      confirmPassword: 'Confirmer le mot de passe',
+      dontHaveAccount: 'Vous n\'avez pas de compte?',
+      alreadyHaveAccount: 'Vous avez déjà un compte?',
+      signingIn: 'Connexion en cours...',
+      signingUp: 'Inscription en cours...',
+      forgotPassword: 'Mot de passe oublié?',
+      resetPassword: 'Réinitialiser le mot de passe',
+      verifyEmail: 'Vérifiez votre email'
+    },
+    dashboard: {
+      stats: {
+        students: 'Étudiants',
+        teachers: 'Enseignants',
+        courses: 'Cours',
+        classes: 'Classes'
+      },
+      recentActivities: 'Activités Récentes',
+      upcomingEvents: 'Événements à Venir',
+      quickActions: 'Actions Rapides',
+      viewAll: 'Voir Tout'
+    },
+    students: {
+      addStudent: 'Ajouter un Étudiant',
+      searchStudents: 'Rechercher des étudiants...',
+      name: 'Nom',
+      grade: 'Niveau',
+      email: 'Email',
+      phone: 'Téléphone',
+      actions: 'Actions',
+      gradeLevel: 'Niveau',
+      deleteConfirm: 'Êtes-vous sûr de vouloir supprimer cet étudiant?',
+      deleteSuccess: 'Étudiant supprimé avec succès',
+      editStudent: 'Modifier l\'Étudiant',
+      studentDetails: 'Détails de l\'Étudiant',
+      personalInfo: 'Informations Personnelles',
+      academicInfo: 'Informations Académiques',
+      contactInfo: 'Informations de Contact',
+      dateOfBirth: 'Date de Naissance',
+      address: 'Adresse',
+      parentInfo: 'Informations des Parents'
+    },
+    features: {
+      title: 'Fonctionnalités Clés',
+      studentManagement: 'Gestion des Étudiants',
+      studentManagement_desc: 'Gérez facilement les informations des étudiants, la présence et les performances académiques',
+      teacherManagement: 'Gestion des Enseignants',
+      teacherManagement_desc: 'Gérez efficacement les profils des enseignants, les horaires et les affectations de cours',
+      courseManagement: 'Gestion des Cours',
+      courseManagement_desc: 'Créez et gérez des cours, des devoirs et des ressources éducatives',
+      scheduleManagement: 'Gestion des Horaires',
+      scheduleManagement_desc: 'Organisez et suivez les horaires de classe, les événements et le calendrier académique'
+    },
+    common: {
+      save: 'Enregistrer',
+      cancel: 'Annuler',
+      edit: 'Modifier',
+      delete: 'Supprimer',
+      view: 'Voir',
+      search: 'Rechercher',
+      filter: 'Filtrer',
+      sort: 'Trier',
+      loading: 'Chargement...',
+      noResults: 'Aucun résultat trouvé',
+      error: 'Une erreur est survenue',
+      success: 'Succès',
+      confirm: 'Confirmer',
+      back: 'Retour',
+      next: 'Suivant',
+      previous: 'Précédent'
+    }
   }
 };
 
 // Map languages to locales
 const localeMap: Record<Language, string> = {
   ar: 'ar-SA',
-  en: 'en-US'
+  en: 'en-US',
+  fr: 'fr-FR'
 };
 
 // Provider component
