@@ -1,0 +1,173 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+// User model for authentication
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String?
+  role      Role     @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  teacher   Teacher? @relation(fields: [teacherId], references: [id])
+  teacherId String?  @unique
+
+  @@map("users")
+}
+
+enum Role {
+  ADMIN
+  TEACHER
+  USER
+}
+
+// Student model
+model Student {
+  id         String   @id @default(uuid())
+  firstName  String
+  lastName   String
+  email      String?  @unique
+  phone      String?
+  address    String?
+  dateOfBirth DateTime?
+  gradeLevel Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Relations
+  enrollments Enrollment[]
+  attendances Attendance[]
+  grades      Grade[]
+
+  @@map("students")
+}
+
+// Teacher model
+model Teacher {
+  id         String   @id @default(uuid())
+  firstName  String
+  lastName   String
+  email      String?  @unique
+  phone      String?
+  address    String?
+  subject    String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Relations
+  user       User?
+  courses    Course[]
+  schedules  Schedule[]
+
+  @@map("teachers")
+}
+
+// Course model
+model Course {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  credits     Int      @default(1)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  teacher     Teacher  @relation(fields: [teacherId], references: [id])
+  teacherId   String
+  enrollments Enrollment[]
+  schedules   Schedule[]
+  grades      Grade[]
+
+  @@map("courses")
+}
+
+// Enrollment model (many-to-many relationship between students and courses)
+model Enrollment {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  studentId String
+  course    Course  @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId  String
+
+  @@unique([studentId, courseId])
+  @@map("enrollments")
+}
+
+// Schedule model
+model Schedule {
+  id        String   @id @default(uuid())
+  dayOfWeek Int      // 0 = Sunday, 1 = Monday, etc.
+  startTime String   // Format: HH:MM
+  endTime   String   // Format: HH:MM
+  room      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  course    Course  @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId  String
+  teacher   Teacher @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  teacherId String
+  attendances Attendance[]
+
+  @@map("schedules")
+}
+
+// Attendance model
+model Attendance {
+  id        String   @id @default(uuid())
+  date      DateTime
+  status    AttendanceStatus
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  student   Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  studentId String
+  schedule  Schedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+  scheduleId String
+
+  @@unique([studentId, scheduleId, date])
+  @@map("attendances")
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+  EXCUSED
+}
+
+// Grade model
+model Grade {
+  id        String   @id @default(uuid())
+  value     Float
+  type      String   // e.g., "Quiz", "Exam", "Homework"
+  date      DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  student   Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  studentId String
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId  String
+
+  @@map("grades")
+}
