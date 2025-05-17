@@ -1,5 +1,6 @@
 'use client';
 
+import React, { useState, useEffect } from 'react';
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -10,12 +11,22 @@ import { useAuth } from "@/contexts/AuthContext";
 
 export default function Home() {
   const router = useRouter();
-  const { t } = useLanguage();
+  const { t, language, isClient } = useLanguage();
   const { isAuthenticated } = useAuth();
+  const [mounted, setMounted] = useState(false);
+
+  // Only show the UI after first render to avoid hydration mismatch
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return null; // Return empty during SSR to avoid hydration mismatch
+  }
 
   return (
     <div className="flex flex-col min-h-screen">
-      <header className="border-b border-border">
+      <header className="border-b border-gray-200 dark:border-gray-700">
         <div className="container mx-auto py-4 px-4 flex justify-between items-center">
           <div className="flex items-center space-x-2">
             <Image

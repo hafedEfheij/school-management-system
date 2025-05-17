@@ -24,6 +24,7 @@ type AuthContextType = {
   isAuthenticated: boolean;
   isAdmin: boolean;
   isTeacher: boolean;
+  mounted: boolean;
 };
 
 // Create auth context
@@ -34,24 +35,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [mounted, setMounted] = useState<boolean>(false);
   const router = useRouter();
 
   // Check if user is authenticated on mount
   useEffect(() => {
+    setMounted(true);
     const checkAuth = async () => {
-      const token = localStorage.getItem('authToken');
-      const userData = localStorage.getItem('user');
+      if (typeof window !== 'undefined') {
+        const token = localStorage.getItem('authToken');
+        const userData = localStorage.getItem('user');
 
-      if (token && userData) {
-        try {
-          setUser(JSON.parse(userData));
-        } catch (error) {
-          console.error('Failed to parse user data:', error);
-          localStorage.removeItem('authToken');
-          localStorage.removeItem('user');
+        if (token && userData) {
+          try {
+            setUser(JSON.parse(userData));
+          } catch (error) {
+            console.error('Failed to parse user data:', error);
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('user');
+          }
         }
       }
-
       setIsLoading(false);
     };
 
@@ -67,8 +71,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const response = await api.auth.login(email, password);
 
       // Save token and user data to localStorage
-      localStorage.setItem('authToken', response.token);
-      localStorage.setItem('user', JSON.stringify(response.user));
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('authToken', response.token);
+        localStorage.setItem('user', JSON.stringify(response.user));
+      }
 
       setUser(response.user);
       router.push('/dashboard');
@@ -98,8 +104,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Logout function
   const logout = () => {
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('user');
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('user');
+    }
     setUser(null);
     router.push('/login');
   };
@@ -120,6 +128,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     isAuthenticated,
     isAdmin,
     isTeacher,
+    mounted,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
