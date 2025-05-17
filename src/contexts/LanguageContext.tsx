@@ -15,6 +15,7 @@ type LanguageContextType = {
   formatNumber: (num: number, options?: Intl.NumberFormatOptions) => string;
   formatCurrency: (amount: number, currency?: string) => string;
   getLocale: () => string;
+  isClient: boolean;
 };
 
 // Create the context
@@ -411,22 +412,27 @@ const localeMap: Record<Language, string> = {
 
 // Provider component
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  // Default to Arabic based on user preference
-  const [language, setLanguageState] = useState<Language>('ar');
+  // Default to English to avoid hydration issues
+  const [language, setLanguageState] = useState<Language>('en');
+  const [isClient, setIsClient] = useState(false);
 
   // Set language and save to localStorage
   const setLanguage = (newLanguage: Language) => {
     setLanguageState(newLanguage);
-    localStorage.setItem('language', newLanguage);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('language', newLanguage);
+    }
 
     // Set the dir attribute on the html element for RTL support
-    document.documentElement.dir = newLanguage === 'ar' ? 'rtl' : 'ltr';
+    if (typeof document !== 'undefined') {
+      document.documentElement.dir = newLanguage === 'ar' ? 'rtl' : 'ltr';
 
-    // Add or remove RTL class for styling
-    if (newLanguage === 'ar') {
-      document.documentElement.classList.add('rtl');
-    } else {
-      document.documentElement.classList.remove('rtl');
+      // Add or remove RTL class for styling
+      if (newLanguage === 'ar') {
+        document.documentElement.classList.add('rtl');
+      } else {
+        document.documentElement.classList.remove('rtl');
+      }
     }
   };
 
@@ -461,25 +467,29 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
 
   // Initialize language from localStorage on client side
   useEffect(() => {
+    setIsClient(true);
     const savedLanguage = localStorage.getItem('language') as Language;
-    if (savedLanguage && (savedLanguage === 'ar' || savedLanguage === 'en')) {
+    if (savedLanguage && (savedLanguage === 'ar' || savedLanguage === 'en' || savedLanguage === 'fr')) {
       setLanguage(savedLanguage);
     } else {
-      // Default to Arabic
-      setLanguage('ar');
+      // Default to English
+      setLanguage('en');
     }
   }, []);
 
+  const contextValue = {
+    language,
+    setLanguage,
+    t,
+    formatDate,
+    formatNumber,
+    formatCurrency,
+    getLocale,
+    isClient
+  };
+
   return (
-    <LanguageContext.Provider value={{
-      language,
-      setLanguage,
-      t,
-      formatDate,
-      formatNumber,
-      formatCurrency,
-      getLocale
-    }}>
+    <LanguageContext.Provider value={contextValue}>
       {children}
     </LanguageContext.Provider>
   );
