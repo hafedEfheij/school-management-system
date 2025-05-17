@@ -33,7 +33,7 @@ const translations = {
       signOut: 'تسجيل الخروج',
       dashboard: 'لوحة التحكم',
       students: 'الطلاب',
-      teachers: 'المعلمين',
+      teachers: 'المعلمون',
       courses: 'الدورات',
       schedule: 'الجدول',
       attendance: 'الحضور',
@@ -85,7 +85,7 @@ const translations = {
     dashboard: {
       stats: {
         students: 'الطلاب',
-        teachers: 'المعلمين',
+        teachers: 'المعلمون',
         courses: 'الدورات',
         classes: 'الفصول'
       },
