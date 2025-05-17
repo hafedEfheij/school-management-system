@@ -24,6 +24,7 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 const translations = {
   ar: {
     app: {
+      title: 'نظام إدارة المدرسة',
       name: 'نظام إدارة المدرسة',
       description: 'حل شامل لإدارة الطلاب والمعلمين والدورات والمزيد',
       signIn: 'تسجيل الدخول',
@@ -40,6 +41,33 @@ const translations = {
       arabic: 'العربية',
       french: 'Français',
       welcome: 'مرحبًا، {name}!'
+    },
+    home: {
+      title: 'إدارة مدرستك بكفاءة',
+      subtitle: 'نظام إدارة شامل للمدارس والمؤسسات التعليمية',
+      getStarted: 'ابدأ الآن',
+      learnMore: 'اعرف المزيد',
+      features: {
+        title: 'الميزات الرئيسية',
+        studentManagement: {
+          title: 'إدارة الطلاب',
+          description: 'إدارة معلومات الطلاب والحضور والأداء الأكاديمي بسهولة'
+        },
+        courseManagement: {
+          title: 'إدارة الدورات',
+          description: 'إنشاء وإدارة الدورات والواجبات والموارد التعليمية'
+        },
+        gradeTracking: {
+          title: 'تتبع الدرجات',
+          description: 'تتبع وتحليل أداء الطلاب وإنشاء تقارير مفصلة'
+        }
+      },
+      footer: {
+        allRightsReserved: 'جميع الحقوق محفوظة',
+        privacy: 'سياسة الخصوصية',
+        terms: 'شروط الاستخدام',
+        contact: 'اتصل بنا'
+      }
     },
     auth: {
       email: 'البريد الإلكتروني',
@@ -122,6 +150,7 @@ const translations = {
   },
   en: {
     app: {
+      title: 'School Management System',
       name: 'School Management System',
       description: 'A comprehensive solution for managing students, teachers, courses, and more',
       signIn: 'Sign In',
@@ -138,6 +167,33 @@ const translations = {
       arabic: 'العربية',
       french: 'Français',
       welcome: 'Welcome, {name}!'
+    },
+    home: {
+      title: 'Manage Your School Efficiently',
+      subtitle: 'A comprehensive management system for schools and educational institutions',
+      getStarted: 'Get Started',
+      learnMore: 'Learn More',
+      features: {
+        title: 'Key Features',
+        studentManagement: {
+          title: 'Student Management',
+          description: 'Easily manage student information, attendance, and academic performance'
+        },
+        courseManagement: {
+          title: 'Course Management',
+          description: 'Create and manage courses, assignments, and educational resources'
+        },
+        gradeTracking: {
+          title: 'Grade Tracking',
+          description: 'Track and analyze student performance and generate detailed reports'
+        }
+      },
+      footer: {
+        allRightsReserved: 'All Rights Reserved',
+        privacy: 'Privacy Policy',
+        terms: 'Terms of Service',
+        contact: 'Contact Us'
+      }
     },
     auth: {
       email: 'Email',
@@ -220,6 +276,7 @@ const translations = {
   },
   fr: {
     app: {
+      title: 'Système de Gestion Scolaire',
       name: 'Système de Gestion Scolaire',
       description: 'Une solution complète pour gérer les étudiants, les enseignants, les cours et plus encore',
       signIn: 'Se Connecter',
@@ -236,6 +293,33 @@ const translations = {
       arabic: 'العربية',
       french: 'Français',
       welcome: 'Bienvenue, {name}!'
+    },
+    home: {
+      title: 'Gérez Votre École Efficacement',
+      subtitle: 'Un système de gestion complet pour les écoles et les établissements d\'enseignement',
+      getStarted: 'Commencer',
+      learnMore: 'En Savoir Plus',
+      features: {
+        title: 'Fonctionnalités Clés',
+        studentManagement: {
+          title: 'Gestion des Étudiants',
+          description: 'Gérez facilement les informations des étudiants, la présence et les performances académiques'
+        },
+        courseManagement: {
+          title: 'Gestion des Cours',
+          description: 'Créez et gérez des cours, des devoirs et des ressources éducatives'
+        },
+        gradeTracking: {
+          title: 'Suivi des Notes',
+          description: 'Suivez et analysez les performances des étudiants et générez des rapports détaillés'
+        }
+      },
+      footer: {
+        allRightsReserved: 'Tous Droits Réservés',
+        privacy: 'Politique de Confidentialité',
+        terms: 'Conditions d\'Utilisation',
+        contact: 'Contactez-Nous'
+      }
     },
     auth: {
       email: 'Email',
