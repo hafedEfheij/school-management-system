@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "next-themes";
+import TestNavigation from "@/components/TestNavigation";
 import "./globals.css";
 import "../styles/global.css"; // Import our global CSS
 
@@ -34,6 +35,7 @@ export default function RootLayout({
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           {children}
+          <TestNavigation />
         </ThemeProvider>
       </body>
     </html>
