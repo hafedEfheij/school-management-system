@@ -1,0 +1,36 @@
+.container {
+  padding: 20px;
+  margin: 20px;
+  border: 5px solid purple;
+  background-color: lightblue;
+  color: darkblue;
+  font-size: 18px;
+  border-radius: 10px;
+}
+
+.heading {
+  color: darkred;
+  font-size: 32px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.paragraph {
+  line-height: 1.5;
+  margin-bottom: 15px;
+}
+
+.button {
+  background-color: navy;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.button:hover {
+  background-color: darkblue;
+}
