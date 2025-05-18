@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { ModeToggle } from "@/components/ui/mode-toggle";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Home() {
@@ -34,6 +35,7 @@ export default function Home() {
             <span className="text-xl font-bold">{t('app.title')}</span>
           </div>
           <div className="flex items-center space-x-4">
+            <ModeToggle />
             <div className="flex space-x-2">
               <Button variant="outline" asChild>
                 <Link href="/login">{t('app.signIn')}</Link>
