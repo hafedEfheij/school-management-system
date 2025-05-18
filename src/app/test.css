@@ -1,0 +1,10 @@
+.test-class {
+  color: red;
+  font-size: 24px;
+  font-weight: bold;
+  background-color: yellow;
+  padding: 20px;
+  margin: 20px;
+  border: 5px solid blue;
+  border-radius: 10px;
+}
