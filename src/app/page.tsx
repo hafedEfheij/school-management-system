@@ -3,16 +3,11 @@
 import React, { useState, useEffect } from 'react';
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { ModeToggle } from "@/components/ui/mode-toggle";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useAuth } from "@/contexts/AuthContext";
 
 export default function Home() {
-  const router = useRouter();
   const { t, language, isClient } = useLanguage();
-  const { isAuthenticated } = useAuth();
   const [mounted, setMounted] = useState(false);
 
   // Only show the UI after first render to avoid hydration mismatch
@@ -26,7 +21,7 @@ export default function Home() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <header className="border-b border-gray-200 dark:border-gray-700">
+      <header className="border-b border-gray-200 dark:border-gray-800">
         <div className="container mx-auto py-4 px-4 flex justify-between items-center">
           <div className="flex items-center space-x-2">
             <Image
@@ -39,21 +34,14 @@ export default function Home() {
             <span className="text-xl font-bold">{t('app.title')}</span>
           </div>
           <div className="flex items-center space-x-4">
-            <ModeToggle />
-            {isAuthenticated ? (
-              <Button asChild>
-                <Link href="/dashboard">{t('app.dashboard')}</Link>
+            <div className="flex space-x-2">
+              <Button variant="outline" asChild>
+                <Link href="/login">{t('app.signIn')}</Link>
               </Button>
-            ) : (
-              <div className="flex space-x-2">
-                <Button variant="outline" asChild>
-                  <Link href="/login">{t('app.signIn')}</Link>
-                </Button>
-                <Button asChild>
-                  <Link href="/register">{t('app.signUp')}</Link>
-                </Button>
-              </div>
-            )}
+              <Button asChild>
+                <Link href="/register">{t('app.signUp')}</Link>
+              </Button>
+            </div>
           </div>
         </div>
       </header>
@@ -67,8 +55,8 @@ export default function Home() {
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <Button size="lg" asChild>
-                <Link href={isAuthenticated ? "/dashboard" : "/register"}>
-                  {isAuthenticated ? t('home.getStarted') : t('app.signUp')}
+                <Link href="/register">
+                  {t('app.signUp')}
                 </Link>
               </Button>
               <Button size="lg" variant="outline" asChild>
