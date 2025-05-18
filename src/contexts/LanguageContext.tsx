@@ -146,6 +146,8 @@ const translations = {
       first: 'الأول',
       second: 'الثاني',
       third: 'الثالث',
+      darkMode: 'الوضع الداكن',
+      lightMode: 'الوضع الفاتح',
       rtlExample: 'هذا مثال على النص المكتوب من اليمين إلى اليسار. يتم عرضه بشكل صحيح في واجهة المستخدم.'
     }
   },
@@ -272,6 +274,8 @@ const translations = {
       first: 'First',
       second: 'Second',
       third: 'Third',
+      darkMode: 'Dark Mode',
+      lightMode: 'Light Mode',
       rtlExample: 'This is an example of left-to-right text. It is displayed correctly in the user interface.'
     }
   },
@@ -398,6 +402,8 @@ const translations = {
       first: 'Premier',
       second: 'Deuxième',
       third: 'Troisième',
+      darkMode: 'Mode Sombre',
+      lightMode: 'Mode Clair',
       rtlExample: 'Ceci est un exemple de texte de gauche à droite. Il est affiché correctement dans l\'interface utilisateur.'
     }
   }
