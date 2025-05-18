@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { ThemeProvider } from "next-themes";
 import "./globals.css";
-import { ThemeProvider } from "@/components/theme-provider";
-import { LanguageProvider } from "@/contexts/LanguageContext";
-import { AuthProvider } from "@/contexts/AuthContext";
+import "../styles/global.css"; // Import our global CSS
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,8 +16,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "School Management System",
-  description: "A comprehensive solution for managing schools and educational institutions",
-  keywords: ["school", "education", "management", "students", "teachers", "courses"],
+  description: "A comprehensive school management system",
 };
 
 export default function RootLayout({
@@ -28,21 +26,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        suppressHydrationWarning
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <AuthProvider>
-            <LanguageProvider>
-              {children}
-            </LanguageProvider>
-          </AuthProvider>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          {children}
         </ThemeProvider>
       </body>
     </html>
