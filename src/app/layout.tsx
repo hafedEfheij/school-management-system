@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "next-themes";
+import Header from "@/components/Header";
 import TestNavigation from "@/components/TestNavigation";
 import "./globals.css";
 import "../styles/global.css"; // Import our global CSS
@@ -34,8 +35,13 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          {children}
-          <TestNavigation />
+          <div className="flex flex-col min-h-screen">
+            <Header />
+            <main className="flex-1">
+              {children}
+            </main>
+            <TestNavigation />
+          </div>
         </ThemeProvider>
       </body>
     </html>
