@@ -67,9 +67,7 @@ const translations = {
         allRightsReserved: 'جميع الحقوق محفوظة',
         privacy: 'سياسة الخصوصية',
         terms: 'شروط الاستخدام',
-        contact: 'اتصل بنا',
-        quickLinks: 'روابط سريعة',
-        legal: 'قانوني'
+        contact: 'اتصل بنا'
       }
     },
     auth: {
@@ -116,6 +114,36 @@ const translations = {
       address: 'العنوان',
       parentInfo: 'معلومات ولي الأمر'
     },
+    teachers: {
+      addTeacher: 'إضافة معلم',
+      searchTeachers: 'البحث عن معلمين...',
+      name: 'الاسم',
+      subject: 'المادة',
+      email: 'البريد الإلكتروني',
+      phone: 'الهاتف',
+      qualification: 'المؤهل',
+      actions: 'الإجراءات',
+      deleteConfirm: 'هل أنت متأكد أنك تريد حذف هذا المعلم؟',
+      deleteSuccess: 'تم حذف المعلم بنجاح',
+      editTeacher: 'تعديل بيانات المعلم',
+      teacherDetails: 'تفاصيل المعلم'
+    },
+    courses: {
+      addCourse: 'إضافة دورة',
+      searchCourses: 'البحث عن دورات...',
+      name: 'اسم الدورة',
+      code: 'رمز الدورة',
+      teacher: 'المعلم',
+      students: 'الطلاب',
+      schedule: 'الجدول',
+      duration: 'المدة',
+      description: 'الوصف',
+      actions: 'الإجراءات',
+      deleteConfirm: 'هل أنت متأكد أنك تريد حذف هذه الدورة؟',
+      deleteSuccess: 'تم حذف الدورة بنجاح',
+      editCourse: 'تعديل الدورة',
+      courseDetails: 'تفاصيل الدورة'
+    },
     features: {
       title: 'الميزات الرئيسية',
       studentManagement: 'إدارة الطلاب',
@@ -150,6 +178,12 @@ const translations = {
       third: 'الثالث',
       darkMode: 'الوضع الداكن',
       lightMode: 'الوضع الفاتح',
+      showing: 'عرض',
+      to: 'إلى',
+      of: 'من',
+      results: 'النتائج',
+      next: 'التالي',
+      previous: 'السابق',
       rtlExample: 'هذا مثال على النص المكتوب من اليمين إلى اليسار. يتم عرضه بشكل صحيح في واجهة المستخدم.'
     }
   },
@@ -197,9 +231,7 @@ const translations = {
         allRightsReserved: 'All Rights Reserved',
         privacy: 'Privacy Policy',
         terms: 'Terms of Service',
-        contact: 'Contact Us',
-        quickLinks: 'Quick Links',
-        legal: 'Legal'
+        contact: 'Contact Us'
       }
     },
     auth: {
@@ -246,6 +278,36 @@ const translations = {
       address: 'Address',
       parentInfo: 'Parent Information'
     },
+    teachers: {
+      addTeacher: 'Add Teacher',
+      searchTeachers: 'Search teachers...',
+      name: 'Name',
+      subject: 'Subject',
+      email: 'Email',
+      phone: 'Phone',
+      qualification: 'Qualification',
+      actions: 'Actions',
+      deleteConfirm: 'Are you sure you want to delete this teacher?',
+      deleteSuccess: 'Teacher deleted successfully',
+      editTeacher: 'Edit Teacher',
+      teacherDetails: 'Teacher Details'
+    },
+    courses: {
+      addCourse: 'Add Course',
+      searchCourses: 'Search courses...',
+      name: 'Course Name',
+      code: 'Course Code',
+      teacher: 'Teacher',
+      students: 'Students',
+      schedule: 'Schedule',
+      duration: 'Duration',
+      description: 'Description',
+      actions: 'Actions',
+      deleteConfirm: 'Are you sure you want to delete this course?',
+      deleteSuccess: 'Course deleted successfully',
+      editCourse: 'Edit Course',
+      courseDetails: 'Course Details'
+    },
     features: {
       title: 'Key Features',
       studentManagement: 'Student Management',
@@ -280,6 +342,12 @@ const translations = {
       third: 'Third',
       darkMode: 'Dark Mode',
       lightMode: 'Light Mode',
+      showing: 'Showing',
+      to: 'to',
+      of: 'of',
+      results: 'results',
+      next: 'Next',
+      previous: 'Previous',
       rtlExample: 'This is an example of left-to-right text. It is displayed correctly in the user interface.'
     }
   },
@@ -327,9 +395,7 @@ const translations = {
         allRightsReserved: 'Tous Droits Réservés',
         privacy: 'Politique de Confidentialité',
         terms: 'Conditions d\'Utilisation',
-        contact: 'Contactez-Nous',
-        quickLinks: 'Liens Rapides',
-        legal: 'Légal'
+        contact: 'Contactez-Nous'
       }
     },
     auth: {
@@ -376,6 +442,36 @@ const translations = {
       address: 'Adresse',
       parentInfo: 'Informations des Parents'
     },
+    teachers: {
+      addTeacher: 'Ajouter un Enseignant',
+      searchTeachers: 'Rechercher des enseignants...',
+      name: 'Nom',
+      subject: 'Matière',
+      email: 'Email',
+      phone: 'Téléphone',
+      qualification: 'Qualification',
+      actions: 'Actions',
+      deleteConfirm: 'Êtes-vous sûr de vouloir supprimer cet enseignant?',
+      deleteSuccess: 'Enseignant supprimé avec succès',
+      editTeacher: 'Modifier l\'Enseignant',
+      teacherDetails: 'Détails de l\'Enseignant'
+    },
+    courses: {
+      addCourse: 'Ajouter un Cours',
+      searchCourses: 'Rechercher des cours...',
+      name: 'Nom du Cours',
+      code: 'Code du Cours',
+      teacher: 'Enseignant',
+      students: 'Étudiants',
+      schedule: 'Horaire',
+      duration: 'Durée',
+      description: 'Description',
+      actions: 'Actions',
+      deleteConfirm: 'Êtes-vous sûr de vouloir supprimer ce cours?',
+      deleteSuccess: 'Cours supprimé avec succès',
+      editCourse: 'Modifier le Cours',
+      courseDetails: 'Détails du Cours'
+    },
     features: {
       title: 'Fonctionnalités Clés',
       studentManagement: 'Gestion des Étudiants',
@@ -410,6 +506,12 @@ const translations = {
       third: 'Troisième',
       darkMode: 'Mode Sombre',
       lightMode: 'Mode Clair',
+      showing: 'Affichage de',
+      to: 'à',
+      of: 'sur',
+      results: 'résultats',
+      next: 'Suivant',
+      previous: 'Précédent',
       rtlExample: 'Ceci est un exemple de texte de gauche à droite. Il est affiché correctement dans l\'interface utilisateur.'
     }
   }
