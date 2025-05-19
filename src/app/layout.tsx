@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { LanguageProvider } from "@/contexts/LanguageContext";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 import TestNavigation from "@/components/TestNavigation";
 import "./globals.css";
 import "../styles/global.css"; // Import our global CSS
@@ -36,8 +38,14 @@ export default function RootLayout({
       >
         <LanguageProvider>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            {children}
-            <TestNavigation />
+            <div className="flex flex-col min-h-screen">
+              <Header />
+              <main className="flex-1">
+                {children}
+              </main>
+              <Footer />
+              <TestNavigation />
+            </div>
           </ThemeProvider>
         </LanguageProvider>
       </body>
