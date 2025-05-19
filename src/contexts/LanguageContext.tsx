@@ -67,7 +67,9 @@ const translations = {
         allRightsReserved: 'جميع الحقوق محفوظة',
         privacy: 'سياسة الخصوصية',
         terms: 'شروط الاستخدام',
-        contact: 'اتصل بنا'
+        contact: 'اتصل بنا',
+        quickLinks: 'روابط سريعة',
+        legal: 'قانوني'
       }
     },
     auth: {
@@ -195,7 +197,9 @@ const translations = {
         allRightsReserved: 'All Rights Reserved',
         privacy: 'Privacy Policy',
         terms: 'Terms of Service',
-        contact: 'Contact Us'
+        contact: 'Contact Us',
+        quickLinks: 'Quick Links',
+        legal: 'Legal'
       }
     },
     auth: {
@@ -323,7 +327,9 @@ const translations = {
         allRightsReserved: 'Tous Droits Réservés',
         privacy: 'Politique de Confidentialité',
         terms: 'Conditions d\'Utilisation',
-        contact: 'Contactez-Nous'
+        contact: 'Contactez-Nous',
+        quickLinks: 'Liens Rapides',
+        legal: 'Légal'
       }
     },
     auth: {
