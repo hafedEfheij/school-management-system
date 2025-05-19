@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "next-themes";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+import { LanguageProvider } from "@/contexts/LanguageContext";
 import TestNavigation from "@/components/TestNavigation";
 import "./globals.css";
 import "../styles/global.css"; // Import our global CSS
@@ -35,16 +34,12 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <div className="flex flex-col min-h-screen">
-            <Header />
-            <main className="flex-1">
-              {children}
-            </main>
-            <Footer />
+        <LanguageProvider>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            {children}
             <TestNavigation />
-          </div>
-        </ThemeProvider>
+          </ThemeProvider>
+        </LanguageProvider>
       </body>
     </html>
   );
