@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
@@ -42,11 +44,31 @@ export interface ButtonProps
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, ...props }, ref) => {
     const Comp = asChild ? Slot : "button"
+    const [mounted, setMounted] = React.useState(false);
+
+    // Only show the UI after first render to avoid hydration mismatch
+    React.useEffect(() => {
+      setMounted(true);
+    }, []);
+
+    // Use a simplified version during SSR to avoid hydration mismatches
+    if (!mounted && typeof window !== 'undefined') {
+      return (
+        <Comp
+          className={cn(buttonVariants({ variant, size, className }))}
+          ref={ref}
+          {...props}
+          suppressHydrationWarning
+        />
+      );
+    }
+
     return (
       <Comp
         className={cn(buttonVariants({ variant, size, className }))}
         ref={ref}
         {...props}
+        suppressHydrationWarning
       />
     )
   }
