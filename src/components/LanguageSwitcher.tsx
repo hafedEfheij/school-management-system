@@ -5,7 +5,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { Globe } from 'lucide-react';
 
 const LanguageSwitcher = () => {
-  const { language, setLanguage, t } = useLanguage();
+  const { language, setLanguage, t, isClient } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
 
@@ -14,8 +14,18 @@ const LanguageSwitcher = () => {
     setMounted(true);
   }, []);
 
-  if (!mounted) {
-    return null;
+  // Return a simplified version during SSR to avoid hydration mismatches
+  if (!mounted || !isClient) {
+    return (
+      <div className="relative">
+        <button
+          className="flex items-center space-x-1 rounded-md border border-gray-300 px-3 py-2 text-sm font-medium hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-800"
+        >
+          <Globe className="h-4 w-4" />
+          <span className="ml-2">EN</span>
+        </button>
+      </div>
+    );
   }
 
   const toggleDropdown = () => {
