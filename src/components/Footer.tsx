@@ -5,17 +5,31 @@ import Link from 'next/link';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 const Footer = () => {
-  const { t } = useLanguage();
+  const { t, isClient } = useLanguage();
   const [mounted, setMounted] = useState(false);
-  const currentYear = new Date().getFullYear();
+  // Use a constant year for SSR to avoid hydration mismatch
+  const STATIC_YEAR = 2024;
+  // Only use dynamic year on client side
+  const currentYear = mounted ? new Date().getFullYear() : STATIC_YEAR;
 
   // Only show the UI after first render to avoid hydration mismatch
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  if (!mounted) {
-    return null;
+  // Return a simplified version during SSR to avoid hydration mismatches
+  if (!mounted || !isClient) {
+    return (
+      <footer className="bg-gray-100 dark:bg-gray-900 py-8 border-t border-gray-200 dark:border-gray-800">
+        <div className="container mx-auto px-4">
+          <div className="border-t border-gray-200 dark:border-gray-800 mt-8 pt-8 text-center">
+            <p className="text-gray-600 dark:text-gray-400">
+              &copy; {STATIC_YEAR} School Management System
+            </p>
+          </div>
+        </div>
+      </footer>
+    );
   }
 
   return (
@@ -35,32 +49,32 @@ const Footer = () => {
             <h3 className="text-lg font-semibold mb-4">{t('home.footer.quickLinks')}</h3>
             <ul className="space-y-2">
               <li>
-                <Link 
-                  href="/dashboard" 
+                <Link
+                  href="/dashboard"
                   className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
                 >
                   {t('app.dashboard')}
                 </Link>
               </li>
               <li>
-                <Link 
-                  href="/students" 
+                <Link
+                  href="/students"
                   className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
                 >
                   {t('app.students')}
                 </Link>
               </li>
               <li>
-                <Link 
-                  href="/teachers" 
+                <Link
+                  href="/teachers"
                   className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
                 >
                   {t('app.teachers')}
                 </Link>
               </li>
               <li>
-                <Link 
-                  href="/courses" 
+                <Link
+                  href="/courses"
                   className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
                 >
                   {t('app.courses')}
@@ -74,16 +88,16 @@ const Footer = () => {
             <h3 className="text-lg font-semibold mb-4">{t('home.footer.legal')}</h3>
             <ul className="space-y-2">
               <li>
-                <Link 
-                  href="/privacy" 
+                <Link
+                  href="/privacy"
                   className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
                 >
                   {t('home.footer.privacy')}
                 </Link>
               </li>
               <li>
-                <Link 
-                  href="/terms" 
+                <Link
+                  href="/terms"
                   className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
                 >
                   {t('home.footer.terms')}
@@ -107,7 +121,7 @@ const Footer = () => {
         </div>
 
         <div className="border-t border-gray-200 dark:border-gray-800 mt-8 pt-8 text-center">
-          <p className="text-gray-600 dark:text-gray-400">
+          <p className="text-gray-600 dark:text-gray-400" suppressHydrationWarning>
             &copy; {currentYear} {t('app.title')}. {t('home.footer.allRightsReserved')}
           </p>
         </div>
