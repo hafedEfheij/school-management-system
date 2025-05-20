@@ -114,36 +114,6 @@ const translations = {
       address: 'العنوان',
       parentInfo: 'معلومات ولي الأمر'
     },
-    teachers: {
-      addTeacher: 'إضافة معلم',
-      searchTeachers: 'البحث عن معلمين...',
-      name: 'الاسم',
-      subject: 'المادة',
-      email: 'البريد الإلكتروني',
-      phone: 'الهاتف',
-      qualification: 'المؤهل',
-      actions: 'الإجراءات',
-      deleteConfirm: 'هل أنت متأكد أنك تريد حذف هذا المعلم؟',
-      deleteSuccess: 'تم حذف المعلم بنجاح',
-      editTeacher: 'تعديل بيانات المعلم',
-      teacherDetails: 'تفاصيل المعلم'
-    },
-    courses: {
-      addCourse: 'إضافة دورة',
-      searchCourses: 'البحث عن دورات...',
-      name: 'اسم الدورة',
-      code: 'رمز الدورة',
-      teacher: 'المعلم',
-      students: 'الطلاب',
-      schedule: 'الجدول',
-      duration: 'المدة',
-      description: 'الوصف',
-      actions: 'الإجراءات',
-      deleteConfirm: 'هل أنت متأكد أنك تريد حذف هذه الدورة؟',
-      deleteSuccess: 'تم حذف الدورة بنجاح',
-      editCourse: 'تعديل الدورة',
-      courseDetails: 'تفاصيل الدورة'
-    },
     features: {
       title: 'الميزات الرئيسية',
       studentManagement: 'إدارة الطلاب',
@@ -178,12 +148,6 @@ const translations = {
       third: 'الثالث',
       darkMode: 'الوضع الداكن',
       lightMode: 'الوضع الفاتح',
-      showing: 'عرض',
-      to: 'إلى',
-      of: 'من',
-      results: 'النتائج',
-      next: 'التالي',
-      previous: 'السابق',
       rtlExample: 'هذا مثال على النص المكتوب من اليمين إلى اليسار. يتم عرضه بشكل صحيح في واجهة المستخدم.'
     }
   },
@@ -278,36 +242,6 @@ const translations = {
       address: 'Address',
       parentInfo: 'Parent Information'
     },
-    teachers: {
-      addTeacher: 'Add Teacher',
-      searchTeachers: 'Search teachers...',
-      name: 'Name',
-      subject: 'Subject',
-      email: 'Email',
-      phone: 'Phone',
-      qualification: 'Qualification',
-      actions: 'Actions',
-      deleteConfirm: 'Are you sure you want to delete this teacher?',
-      deleteSuccess: 'Teacher deleted successfully',
-      editTeacher: 'Edit Teacher',
-      teacherDetails: 'Teacher Details'
-    },
-    courses: {
-      addCourse: 'Add Course',
-      searchCourses: 'Search courses...',
-      name: 'Course Name',
-      code: 'Course Code',
-      teacher: 'Teacher',
-      students: 'Students',
-      schedule: 'Schedule',
-      duration: 'Duration',
-      description: 'Description',
-      actions: 'Actions',
-      deleteConfirm: 'Are you sure you want to delete this course?',
-      deleteSuccess: 'Course deleted successfully',
-      editCourse: 'Edit Course',
-      courseDetails: 'Course Details'
-    },
     features: {
       title: 'Key Features',
       studentManagement: 'Student Management',
@@ -342,12 +276,6 @@ const translations = {
       third: 'Third',
       darkMode: 'Dark Mode',
       lightMode: 'Light Mode',
-      showing: 'Showing',
-      to: 'to',
-      of: 'of',
-      results: 'results',
-      next: 'Next',
-      previous: 'Previous',
       rtlExample: 'This is an example of left-to-right text. It is displayed correctly in the user interface.'
     }
   },
@@ -442,36 +370,6 @@ const translations = {
       address: 'Adresse',
       parentInfo: 'Informations des Parents'
     },
-    teachers: {
-      addTeacher: 'Ajouter un Enseignant',
-      searchTeachers: 'Rechercher des enseignants...',
-      name: 'Nom',
-      subject: 'Matière',
-      email: 'Email',
-      phone: 'Téléphone',
-      qualification: 'Qualification',
-      actions: 'Actions',
-      deleteConfirm: 'Êtes-vous sûr de vouloir supprimer cet enseignant?',
-      deleteSuccess: 'Enseignant supprimé avec succès',
-      editTeacher: 'Modifier l\'Enseignant',
-      teacherDetails: 'Détails de l\'Enseignant'
-    },
-    courses: {
-      addCourse: 'Ajouter un Cours',
-      searchCourses: 'Rechercher des cours...',
-      name: 'Nom du Cours',
-      code: 'Code du Cours',
-      teacher: 'Enseignant',
-      students: 'Étudiants',
-      schedule: 'Horaire',
-      duration: 'Durée',
-      description: 'Description',
-      actions: 'Actions',
-      deleteConfirm: 'Êtes-vous sûr de vouloir supprimer ce cours?',
-      deleteSuccess: 'Cours supprimé avec succès',
-      editCourse: 'Modifier le Cours',
-      courseDetails: 'Détails du Cours'
-    },
     features: {
       title: 'Fonctionnalités Clés',
       studentManagement: 'Gestion des Étudiants',
@@ -506,12 +404,6 @@ const translations = {
       third: 'Troisième',
       darkMode: 'Mode Sombre',
       lightMode: 'Mode Clair',
-      showing: 'Affichage de',
-      to: 'à',
-      of: 'sur',
-      results: 'résultats',
-      next: 'Suivant',
-      previous: 'Précédent',
       rtlExample: 'Ceci est un exemple de texte de gauche à droite. Il est affiché correctement dans l\'interface utilisateur.'
     }
   }
@@ -533,19 +425,24 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   // Set language and save to localStorage
   const setLanguage = (newLanguage: Language) => {
     setLanguageState(newLanguage);
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('language', newLanguage);
-    }
 
-    // Set the dir attribute on the html element for RTL support
-    if (typeof document !== 'undefined') {
-      document.documentElement.dir = newLanguage === 'ar' ? 'rtl' : 'ltr';
+    // Only run client-side code if we're in the browser
+    if (isClient) {
+      try {
+        // Save to localStorage
+        localStorage.setItem('language', newLanguage);
 
-      // Add or remove RTL class for styling
-      if (newLanguage === 'ar') {
-        document.documentElement.classList.add('rtl');
-      } else {
-        document.documentElement.classList.remove('rtl');
+        // Set the dir attribute on the html element for RTL support
+        document.documentElement.dir = newLanguage === 'ar' ? 'rtl' : 'ltr';
+
+        // Add or remove RTL class for styling
+        if (newLanguage === 'ar') {
+          document.documentElement.classList.add('rtl');
+        } else {
+          document.documentElement.classList.remove('rtl');
+        }
+      } catch (error) {
+        console.error('Error updating language settings:', error);
       }
     }
   };
@@ -582,11 +479,20 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   // Initialize language from localStorage on client side
   useEffect(() => {
     setIsClient(true);
-    const savedLanguage = localStorage.getItem('language') as Language;
-    if (savedLanguage && (savedLanguage === 'ar' || savedLanguage === 'en' || savedLanguage === 'fr')) {
-      setLanguage(savedLanguage);
-    } else {
-      // Default to English
+    try {
+      // Safely access localStorage only on the client side
+      if (typeof window !== 'undefined') {
+        const savedLanguage = localStorage.getItem('language') as Language;
+        if (savedLanguage && (savedLanguage === 'ar' || savedLanguage === 'en' || savedLanguage === 'fr')) {
+          setLanguage(savedLanguage);
+        } else {
+          // Default to English
+          setLanguage('en');
+        }
+      }
+    } catch (error) {
+      console.error('Error accessing localStorage:', error);
+      // Default to English if there's an error
       setLanguage('en');
     }
   }, []);
