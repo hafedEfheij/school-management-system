@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { ThemeProvider } from "next-themes";
 import { LanguageProvider } from "@/contexts/LanguageContext";
+import { SafeThemeProvider } from "@/components/ui/safe-theme-provider";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import TestNavigation from "@/components/TestNavigation";
@@ -38,7 +38,7 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         <LanguageProvider>
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <SafeThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <div className="flex flex-col min-h-screen">
               <Header />
               <main className="flex-1">
@@ -47,7 +47,7 @@ export default function RootLayout({
               <Footer />
               <TestNavigation />
             </div>
-          </ThemeProvider>
+          </SafeThemeProvider>
         </LanguageProvider>
       </body>
     </html>
