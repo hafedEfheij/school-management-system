@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 
 export function ModeToggle() {
   const { theme, setTheme } = useTheme()
-  const { t } = useLanguage()
+  const { t, isClient } = useLanguage()
   const [mounted, setMounted] = React.useState(false)
 
   // Only show the UI after first render to avoid hydration mismatch
@@ -17,8 +17,17 @@ export function ModeToggle() {
     setMounted(true)
   }, [])
 
-  if (!mounted) {
-    return null
+  // Return a simplified version during SSR to avoid hydration mismatches
+  if (!mounted || !isClient) {
+    return (
+      <Button
+        variant="outline"
+        size="icon"
+        className="rounded-full w-9 h-9 border-gray-200 dark:border-gray-800"
+      >
+        <Sun className="h-[1.2rem] w-[1.2rem]" />
+      </Button>
+    )
   }
 
   return (
