@@ -16,12 +16,24 @@ export default function Home() {
     setMounted(true);
   }, []);
 
-  if (!mounted) {
-    return null; // Return empty during SSR to avoid hydration mismatch
+  // Return a simplified version during SSR to avoid hydration mismatches
+  if (!mounted || !isClient) {
+    return (
+      <div className="py-12">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h1 className="text-4xl md:text-6xl font-bold mb-6">School Management System</h1>
+            <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto">
+              A comprehensive management system for schools
+            </p>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="py-12">
+    <div className="py-12" suppressHydrationWarning>
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h1 className="text-4xl md:text-6xl font-bold mb-6">{t('home.title')}</h1>
