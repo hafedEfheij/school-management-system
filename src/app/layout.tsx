@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { LanguageProvider } from "@/contexts/LanguageContext";
 import { SafeThemeProvider } from "@/components/ui/safe-theme-provider";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { ClientOnly } from "@/components/ui/client-only";
+import ClientProviders from "@/components/providers/ClientProviders";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import TestNavigation from "@/components/TestNavigation";
@@ -41,7 +41,7 @@ export default function RootLayout({
       >
         <ErrorBoundary>
           <ClientOnly fallback={<div className="p-8 text-center">Loading...</div>}>
-            <LanguageProvider>
+            <ClientProviders>
               <SafeThemeProvider attribute="class" defaultTheme="system" enableSystem>
                 <div className="flex flex-col min-h-screen">
                   <Header />
@@ -52,7 +52,7 @@ export default function RootLayout({
                   <TestNavigation />
                 </div>
               </SafeThemeProvider>
-            </LanguageProvider>
+            </ClientProviders>
           </ClientOnly>
         </ErrorBoundary>
       </body>
