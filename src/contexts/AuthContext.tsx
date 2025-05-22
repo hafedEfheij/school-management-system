@@ -77,10 +77,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       setUser(response.user);
+
+      // Log success in development
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Login successful:', response.user);
+      }
+
       router.push('/dashboard');
     } catch (error) {
       console.error('Login error:', error);
-      setError(error instanceof Error ? error.message : 'Failed to login');
+
+      // More detailed error in development
+      if (process.env.NODE_ENV === 'development') {
+        if (error instanceof Error) {
+          setError(`Login failed: ${error.message}. Please check the console for more details.`);
+        } else {
+          setError('Login failed. Please check the console for more details.');
+        }
+      } else {
+        setError(error instanceof Error ? error.message : 'Failed to login');
+      }
     } finally {
       setIsLoading(false);
     }

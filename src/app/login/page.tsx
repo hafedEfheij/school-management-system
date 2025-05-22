@@ -21,7 +21,7 @@ export default function LoginPage() {
   const { login, isLoading, error } = useAuth();
   const { t } = useLanguage();
   const [showPassword, setShowPassword] = useState(false);
-  
+
   const {
     register,
     handleSubmit,
@@ -29,11 +29,11 @@ export default function LoginPage() {
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
   });
-  
+
   const onSubmit = async (data: LoginFormData) => {
     await login(data.email, data.password);
   };
-  
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
@@ -50,8 +50,21 @@ export default function LoginPage() {
               {t('app.signUp')}
             </Link>
           </p>
+
+          {process.env.NODE_ENV === 'development' && (
+            <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/30 rounded-md">
+              <h3 className="text-sm font-medium text-blue-800 dark:text-blue-300 mb-2">
+                Development Login Credentials:
+              </h3>
+              <ul className="text-xs text-blue-700 dark:text-blue-400 space-y-1">
+                <li><strong>Admin:</strong> admin@example.com / password</li>
+                <li><strong>Teacher:</strong> teacher@example.com / password</li>
+                <li><strong>User:</strong> user@example.com / password</li>
+              </ul>
+            </div>
+          )}
         </div>
-        
+
         <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
@@ -98,7 +111,7 @@ export default function LoginPage() {
               )}
             </div>
           </div>
-          
+
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <input
@@ -114,7 +127,7 @@ export default function LoginPage() {
                 Remember me
               </label>
             </div>
-            
+
             <div className="text-sm">
               <Link
                 href="/forgot-password"
@@ -124,7 +137,7 @@ export default function LoginPage() {
               </Link>
             </div>
           </div>
-          
+
           {error && (
             <div className="rounded-md bg-red-50 dark:bg-red-900/30 p-4">
               <div className="flex">
@@ -136,7 +149,7 @@ export default function LoginPage() {
               </div>
             </div>
           )}
-          
+
           <div>
             <button
               type="submit"

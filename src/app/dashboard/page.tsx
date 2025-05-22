@@ -3,20 +3,18 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
-import MainLayout from '@/components/layout/MainLayout';
 import { FaUserGraduate, FaChalkboardTeacher, FaBook, FaCalendarAlt } from 'react-icons/fa';
-import { supabase } from '@/lib/supabase';
 
 export default function Dashboard() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const { t, language } = useLanguage();
   const [stats, setStats] = useState({
-    students: 0,
-    teachers: 0,
-    courses: 0,
-    classes: 0,
+    students: 120,
+    teachers: 15,
+    courses: 25,
+    classes: 40,
   });
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   // Helper for RTL-aware margin
   const getMarginClass = (direction: 'left' | 'right', size: number) => {
@@ -27,56 +25,6 @@ export default function Dashboard() {
     }
   };
 
-  useEffect(() => {
-    const fetchStats = async () => {
-      setLoading(true);
-      try {
-        // In a real application, these would be actual database queries
-        // For now, we'll just simulate some data
-
-        // Fetch student count
-        const { count: studentCount, error: studentError } = await supabase
-          .from('students')
-          .select('*', { count: 'exact', head: true });
-
-        // Fetch teacher count
-        const { count: teacherCount, error: teacherError } = await supabase
-          .from('teachers')
-          .select('*', { count: 'exact', head: true });
-
-        // Fetch course count
-        const { count: courseCount, error: courseError } = await supabase
-          .from('courses')
-          .select('*', { count: 'exact', head: true });
-
-        // Fetch schedule count
-        const { count: scheduleCount, error: scheduleError } = await supabase
-          .from('schedules')
-          .select('*', { count: 'exact', head: true });
-
-        setStats({
-          students: studentCount || 0,
-          teachers: teacherCount || 0,
-          courses: courseCount || 0,
-          classes: scheduleCount || 0,
-        });
-      } catch (error) {
-        console.error('Error fetching stats:', error);
-        // For demo purposes, set some dummy data
-        setStats({
-          students: 120,
-          teachers: 15,
-          courses: 25,
-          classes: 40,
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchStats();
-  }, []);
-
   if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100" dir={language === 'ar' ? 'rtl' : 'ltr'}>
@@ -86,106 +34,89 @@ export default function Dashboard() {
   }
 
   return (
-    <MainLayout>
-      <div className="container mx-auto">
-        <h1 className="text-3xl font-bold mb-8">{t('app.dashboard')}</h1>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{t('app.dashboard')}</h1>
+          <button
+            onClick={logout}
+            className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+          >
+            {t('app.signOut')}
+          </button>
+        </div>
 
-        {loading ? (
-          <div className="flex justify-center">
-            <p className="text-xl">Loading stats...</p>
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-8">
+          <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">
+            {t('dashboard.welcome', { name: user.name })}
+          </h2>
+          <div className="p-4 bg-blue-50 dark:bg-blue-900/30 rounded-md">
+            <h3 className="text-sm font-medium text-blue-800 dark:text-blue-300 mb-2">
+              User Information:
+            </h3>
+            <ul className="text-sm text-blue-700 dark:text-blue-400 space-y-1">
+              <li><strong>Name:</strong> {user.name}</li>
+              <li><strong>Email:</strong> {user.email}</li>
+              <li><strong>Role:</strong> {user.role}</li>
+              {user.teacherId && <li><strong>Teacher ID:</strong> {user.teacherId}</li>}
+            </ul>
           </div>
-        ) : (
-          <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-              <div className="bg-white rounded-lg shadow-md p-6 flex items-center">
-                <div className={`rounded-full bg-blue-100 p-3 ${getMarginClass('left', 4)}`}>
-                  <FaUserGraduate className="text-blue-500 text-xl" />
-                </div>
-                <div>
-                  <p className="text-gray-500">{t('dashboard.stats.students')}</p>
-                  <p className="text-2xl font-bold">{stats.students}</p>
-                </div>
-              </div>
+        </div>
 
-              <div className="bg-white rounded-lg shadow-md p-6 flex items-center">
-                <div className={`rounded-full bg-green-100 p-3 ${getMarginClass('left', 4)}`}>
-                  <FaChalkboardTeacher className="text-green-500 text-xl" />
-                </div>
-                <div>
-                  <p className="text-gray-500">{t('dashboard.stats.teachers')}</p>
-                  <p className="text-2xl font-bold">{stats.teachers}</p>
-                </div>
-              </div>
-
-              <div className="bg-white rounded-lg shadow-md p-6 flex items-center">
-                <div className={`rounded-full bg-purple-100 p-3 ${getMarginClass('left', 4)}`}>
-                  <FaBook className="text-purple-500 text-xl" />
-                </div>
-                <div>
-                  <p className="text-gray-500">{t('dashboard.stats.courses')}</p>
-                  <p className="text-2xl font-bold">{stats.courses}</p>
-                </div>
-              </div>
-
-              <div className="bg-white rounded-lg shadow-md p-6 flex items-center">
-                <div className={`rounded-full bg-yellow-100 p-3 ${getMarginClass('left', 4)}`}>
-                  <FaCalendarAlt className="text-yellow-500 text-xl" />
-                </div>
-                <div>
-                  <p className="text-gray-500">{t('dashboard.stats.classes')}</p>
-                  <p className="text-2xl font-bold">{stats.classes}</p>
-                </div>
-              </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 flex items-center">
+            <div className={`rounded-full bg-blue-100 dark:bg-blue-900/50 p-3 ${getMarginClass('left', 4)}`}>
+              <FaUserGraduate className="text-blue-500 dark:text-blue-400 text-xl" />
             </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="bg-white rounded-lg shadow-md p-6">
-                <h2 className="text-xl font-bold mb-4">{t('dashboard.recentActivities')}</h2>
-                <div className="space-y-4">
-                  <div className="border-b pb-2">
-                    <p className="font-medium">New student registered</p>
-                    <p className="text-sm text-gray-500">2 hours ago</p>
-                  </div>
-                  <div className="border-b pb-2">
-                    <p className="font-medium">Attendance updated for Grade 10</p>
-                    <p className="text-sm text-gray-500">3 hours ago</p>
-                  </div>
-                  <div className="border-b pb-2">
-                    <p className="font-medium">New course added: Advanced Mathematics</p>
-                    <p className="text-sm text-gray-500">5 hours ago</p>
-                  </div>
-                  <div className="border-b pb-2">
-                    <p className="font-medium">Teacher meeting scheduled</p>
-                    <p className="text-sm text-gray-500">Yesterday</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white rounded-lg shadow-md p-6">
-                <h2 className="text-xl font-bold mb-4">{t('dashboard.upcomingEvents')}</h2>
-                <div className="space-y-4">
-                  <div className="border-b pb-2">
-                    <p className="font-medium">Parent-Teacher Meeting</p>
-                    <p className="text-sm text-gray-500">Tomorrow, 4:00 PM</p>
-                  </div>
-                  <div className="border-b pb-2">
-                    <p className="font-medium">Science Fair</p>
-                    <p className="text-sm text-gray-500">May 15, 2023</p>
-                  </div>
-                  <div className="border-b pb-2">
-                    <p className="font-medium">End of Term Exams</p>
-                    <p className="text-sm text-gray-500">June 1-10, 2023</p>
-                  </div>
-                  <div className="border-b pb-2">
-                    <p className="font-medium">Summer Break</p>
-                    <p className="text-sm text-gray-500">Starts June 15, 2023</p>
-                  </div>
-                </div>
-              </div>
+            <div>
+              <p className="text-gray-500 dark:text-gray-400">Students</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.students}</p>
             </div>
-          </>
-        )}
+          </div>
+
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 flex items-center">
+            <div className={`rounded-full bg-green-100 dark:bg-green-900/50 p-3 ${getMarginClass('left', 4)}`}>
+              <FaChalkboardTeacher className="text-green-500 dark:text-green-400 text-xl" />
+            </div>
+            <div>
+              <p className="text-gray-500 dark:text-gray-400">Teachers</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.teachers}</p>
+            </div>
+          </div>
+
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 flex items-center">
+            <div className={`rounded-full bg-purple-100 dark:bg-purple-900/50 p-3 ${getMarginClass('left', 4)}`}>
+              <FaBook className="text-purple-500 dark:text-purple-400 text-xl" />
+            </div>
+            <div>
+              <p className="text-gray-500 dark:text-gray-400">Courses</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.courses}</p>
+            </div>
+          </div>
+
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 flex items-center">
+            <div className={`rounded-full bg-yellow-100 dark:bg-yellow-900/50 p-3 ${getMarginClass('left', 4)}`}>
+              <FaCalendarAlt className="text-yellow-500 dark:text-yellow-400 text-xl" />
+            </div>
+            <div>
+              <p className="text-gray-500 dark:text-gray-400">Classes</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.classes}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+          <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">Development Notes</h2>
+          <p className="text-gray-700 dark:text-gray-300 mb-4">
+            This is a simplified dashboard for development purposes. In a production environment,
+            this would connect to the database and display real-time data.
+          </p>
+          <p className="text-gray-700 dark:text-gray-300">
+            You are currently logged in as <strong>{user.role}</strong>. Different roles have different
+            permissions and access levels in the system.
+          </p>
+        </div>
       </div>
-    </MainLayout>
+    </div>
   );
 }

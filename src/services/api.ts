@@ -22,11 +22,11 @@ const getAuthToken = (): string | null => {
 const getHeaders = (): HeadersInit => {
   const headers = { ...defaultHeaders };
   const token = getAuthToken();
-  
+
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
   }
-  
+
   return headers;
 };
 
@@ -36,7 +36,7 @@ const fetchAPI = async <T>(
   options: RequestInit = {}
 ): Promise<T> => {
   const url = `${API_BASE_URL}${endpoint}`;
-  
+
   const response = await fetch(url, {
     ...options,
     headers: {
@@ -44,14 +44,14 @@ const fetchAPI = async <T>(
       ...options.headers,
     },
   });
-  
+
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
     throw new Error(
       errorData.error || `API request failed with status ${response.status}`
     );
   }
-  
+
   return response.json();
 };
 
@@ -59,19 +59,25 @@ const fetchAPI = async <T>(
 export const api = {
   // Auth endpoints
   auth: {
-    login: (email: string, password: string) =>
-      fetchAPI<{ user: any; token: string }>('/auth/login', {
+    login: (email: string, password: string) => {
+      // Use mock login in development
+      const endpoint = process.env.NODE_ENV === 'development'
+        ? '/auth/mock-login'
+        : '/auth/login';
+
+      return fetchAPI<{ user: any; token: string }>(endpoint, {
         method: 'POST',
         body: JSON.stringify({ email, password }),
-      }),
-    
+      });
+    },
+
     register: (userData: any) =>
       fetchAPI<any>('/auth/register', {
         method: 'POST',
         body: JSON.stringify(userData),
       }),
   },
-  
+
   // Students endpoints
   students: {
     getAll: (params?: Record<string, string>) => {
@@ -80,28 +86,28 @@ export const api = {
         : '';
       return fetchAPI<any[]>(`/students${queryString}`);
     },
-    
+
     getById: (id: string) =>
       fetchAPI<any>(`/students/${id}`),
-    
+
     create: (studentData: any) =>
       fetchAPI<any>('/students', {
         method: 'POST',
         body: JSON.stringify(studentData),
       }),
-    
+
     update: (id: string, studentData: any) =>
       fetchAPI<any>(`/students/${id}`, {
         method: 'PUT',
         body: JSON.stringify(studentData),
       }),
-    
+
     delete: (id: string) =>
       fetchAPI<any>(`/students/${id}`, {
         method: 'DELETE',
       }),
   },
-  
+
   // Teachers endpoints
   teachers: {
     getAll: (params?: Record<string, string>) => {
@@ -110,28 +116,28 @@ export const api = {
         : '';
       return fetchAPI<any[]>(`/teachers${queryString}`);
     },
-    
+
     getById: (id: string) =>
       fetchAPI<any>(`/teachers/${id}`),
-    
+
     create: (teacherData: any) =>
       fetchAPI<any>('/teachers', {
         method: 'POST',
         body: JSON.stringify(teacherData),
       }),
-    
+
     update: (id: string, teacherData: any) =>
       fetchAPI<any>(`/teachers/${id}`, {
         method: 'PUT',
         body: JSON.stringify(teacherData),
       }),
-    
+
     delete: (id: string) =>
       fetchAPI<any>(`/teachers/${id}`, {
         method: 'DELETE',
       }),
   },
-  
+
   // Courses endpoints
   courses: {
     getAll: (params?: Record<string, string>) => {
@@ -140,28 +146,28 @@ export const api = {
         : '';
       return fetchAPI<any[]>(`/courses${queryString}`);
     },
-    
+
     getById: (id: string) =>
       fetchAPI<any>(`/courses/${id}`),
-    
+
     create: (courseData: any) =>
       fetchAPI<any>('/courses', {
         method: 'POST',
         body: JSON.stringify(courseData),
       }),
-    
+
     update: (id: string, courseData: any) =>
       fetchAPI<any>(`/courses/${id}`, {
         method: 'PUT',
         body: JSON.stringify(courseData),
       }),
-    
+
     delete: (id: string) =>
       fetchAPI<any>(`/courses/${id}`, {
         method: 'DELETE',
       }),
   },
-  
+
   // Enrollments endpoints
   enrollments: {
     getAll: (params?: Record<string, string>) => {
@@ -170,19 +176,19 @@ export const api = {
         : '';
       return fetchAPI<any[]>(`/enrollments${queryString}`);
     },
-    
+
     create: (enrollmentData: any) =>
       fetchAPI<any>('/enrollments', {
         method: 'POST',
         body: JSON.stringify(enrollmentData),
       }),
-    
+
     delete: (id: string) =>
       fetchAPI<any>(`/enrollments/${id}`, {
         method: 'DELETE',
       }),
   },
-  
+
   // Schedules endpoints
   schedules: {
     getAll: (params?: Record<string, string>) => {
@@ -191,28 +197,28 @@ export const api = {
         : '';
       return fetchAPI<any[]>(`/schedules${queryString}`);
     },
-    
+
     getById: (id: string) =>
       fetchAPI<any>(`/schedules/${id}`),
-    
+
     create: (scheduleData: any) =>
       fetchAPI<any>('/schedules', {
         method: 'POST',
         body: JSON.stringify(scheduleData),
       }),
-    
+
     update: (id: string, scheduleData: any) =>
       fetchAPI<any>(`/schedules/${id}`, {
         method: 'PUT',
         body: JSON.stringify(scheduleData),
       }),
-    
+
     delete: (id: string) =>
       fetchAPI<any>(`/schedules/${id}`, {
         method: 'DELETE',
       }),
   },
-  
+
   // Attendances endpoints
   attendances: {
     getAll: (params?: Record<string, string>) => {
@@ -221,25 +227,25 @@ export const api = {
         : '';
       return fetchAPI<any[]>(`/attendances${queryString}`);
     },
-    
+
     create: (attendanceData: any) =>
       fetchAPI<any>('/attendances', {
         method: 'POST',
         body: JSON.stringify(attendanceData),
       }),
-    
+
     update: (id: string, attendanceData: any) =>
       fetchAPI<any>(`/attendances/${id}`, {
         method: 'PUT',
         body: JSON.stringify(attendanceData),
       }),
-    
+
     delete: (id: string) =>
       fetchAPI<any>(`/attendances/${id}`, {
         method: 'DELETE',
       }),
   },
-  
+
   // Grades endpoints
   grades: {
     getAll: (params?: Record<string, string>) => {
@@ -248,19 +254,19 @@ export const api = {
         : '';
       return fetchAPI<any[]>(`/grades${queryString}`);
     },
-    
+
     create: (gradeData: any) =>
       fetchAPI<any>('/grades', {
         method: 'POST',
         body: JSON.stringify(gradeData),
       }),
-    
+
     update: (id: string, gradeData: any) =>
       fetchAPI<any>(`/grades/${id}`, {
         method: 'PUT',
         body: JSON.stringify(gradeData),
       }),
-    
+
     delete: (id: string) =>
       fetchAPI<any>(`/grades/${id}`, {
         method: 'DELETE',
