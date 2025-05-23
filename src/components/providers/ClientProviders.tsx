@@ -2,6 +2,8 @@
 
 import { AuthProvider } from '@/contexts/AuthContext';
 import { LanguageProvider } from '@/contexts/LanguageContext';
+import { NotificationProvider } from '@/contexts/NotificationContext';
+import NotificationContainer from '@/components/ui/notification-container';
 
 export default function ClientProviders({
   children,
@@ -9,8 +11,13 @@ export default function ClientProviders({
   children: React.ReactNode;
 }) {
   return (
-    <LanguageProvider>
-      <AuthProvider>{children}</AuthProvider>
-    </LanguageProvider>
+    <NotificationProvider>
+      <LanguageProvider>
+        <AuthProvider>
+          {children}
+          <NotificationContainer />
+        </AuthProvider>
+      </LanguageProvider>
+    </NotificationProvider>
   );
 }
