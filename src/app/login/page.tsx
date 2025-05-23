@@ -7,6 +7,8 @@ import * as z from 'zod';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useNotification } from '@/contexts/NotificationContext';
+import LoadingSpinner from '@/components/ui/loading-spinner';
 import { FaSpinner } from 'react-icons/fa';
 
 // Form validation schema
@@ -19,7 +21,8 @@ type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
   const { login, isLoading, error } = useAuth();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const { addNotification } = useNotification();
   const [showPassword, setShowPassword] = useState(false);
 
   const {
@@ -31,7 +34,21 @@ export default function LoginPage() {
   });
 
   const onSubmit = async (data: LoginFormData) => {
-    await login(data.email, data.password);
+    try {
+      await login(data.email, data.password);
+      addNotification({
+        type: 'success',
+        title: 'Login Successful',
+        message: 'Welcome back! You have been successfully logged in.',
+      });
+    } catch (error) {
+      console.error('Login failed:', error);
+      addNotification({
+        type: 'error',
+        title: 'Login Failed',
+        message: error instanceof Error ? error.message : 'An error occurred during login.',
+      });
+    }
   };
 
   return (
@@ -50,19 +67,6 @@ export default function LoginPage() {
               {t('app.signUp')}
             </Link>
           </p>
-
-          {process.env.NODE_ENV === 'development' && (
-            <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/30 rounded-md">
-              <h3 className="text-sm font-medium text-blue-800 dark:text-blue-300 mb-2">
-                Development Login Credentials:
-              </h3>
-              <ul className="text-xs text-blue-700 dark:text-blue-400 space-y-1">
-                <li><strong>Admin:</strong> admin@example.com / password</li>
-                <li><strong>Teacher:</strong> teacher@example.com / password</li>
-                <li><strong>User:</strong> user@example.com / password</li>
-              </ul>
-            </div>
-          )}
         </div>
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
