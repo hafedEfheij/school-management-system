@@ -1,239 +1,508 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
+import React, { useState, useMemo } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
-import {
-  Search,
-  Plus,
-  Edit,
-  Trash2,
-  Eye,
-  ChevronLeft,
-  ChevronRight,
-  Filter,
-  SortAsc,
-  SortDesc,
-  Mail,
-  Phone,
-  BookOpen
-} from 'lucide-react';
+import { useNotification } from '@/contexts/NotificationContext';
+import SearchInput from '@/components/ui/search-input';
+import FilterPanel, { FilterGroup } from '@/components/ui/filter-panel';
+import ExportButton from '@/components/ui/export-button';
+import BulkActions from '@/components/ui/bulk-actions';
+import SafeDataGrid, { Column } from '@/components/ui/safe-data-grid';
+import SafeButton from '@/components/ui/safe-button';
+import SafeModal from '@/components/ui/safe-modal';
+import { UserPlus, Edit, Trash2, Eye, Mail, Phone } from 'lucide-react';
 
 // Mock student data
-const MOCK_STUDENTS = [
-  { id: 1, name: 'Ahmed Ali', grade: '10th Grade', email: 'ahmed.ali@example.com', phone: '+1234567890' },
-  { id: 2, name: 'Sara Johnson', grade: '11th Grade', email: 'sara.johnson@example.com', phone: '+1234567891' },
-  { id: 3, name: 'Mohammed Hassan', grade: '9th Grade', email: 'mohammed.hassan@example.com', phone: '+1234567892' },
-  { id: 4, name: 'Emily Chen', grade: '12th Grade', email: 'emily.chen@example.com', phone: '+1234567893' },
-  { id: 5, name: 'Omar Farooq', grade: '10th Grade', email: 'omar.farooq@example.com', phone: '+1234567894' },
-  { id: 6, name: 'Sophia Rodriguez', grade: '11th Grade', email: 'sophia.rodriguez@example.com', phone: '+1234567895' },
-  { id: 7, name: 'Amir Khan', grade: '9th Grade', email: 'amir.khan@example.com', phone: '+1234567896' },
-  { id: 8, name: 'Zainab Malik', grade: '12th Grade', email: 'zainab.malik@example.com', phone: '+1234567897' },
-  { id: 9, name: 'David Wilson', grade: '10th Grade', email: 'david.wilson@example.com', phone: '+1234567898' },
-  { id: 10, name: 'Fatima Ahmed', grade: '11th Grade', email: 'fatima.ahmed@example.com', phone: '+1234567899' },
+interface Student {
+  id: string;
+  studentId: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  grade: string;
+  section: string;
+  enrollmentDate: string;
+  status: 'active' | 'inactive' | 'graduated';
+  gpa: number;
+  parentName: string;
+  parentPhone: string;
+}
+
+const mockStudents: Student[] = [
+  {
+    id: '1',
+    studentId: 'STU001',
+    firstName: 'John',
+    lastName: 'Doe',
+    email: 'john.doe@student.school.com',
+    phone: '(555) 123-4567',
+    grade: '10',
+    section: 'A',
+    enrollmentDate: '2023-09-01',
+    status: 'active',
+    gpa: 3.8,
+    parentName: 'Jane Doe',
+    parentPhone: '(555) 123-4568',
+  },
+  {
+    id: '2',
+    studentId: 'STU002',
+    firstName: 'Alice',
+    lastName: 'Smith',
+    email: 'alice.smith@student.school.com',
+    phone: '(555) 234-5678',
+    grade: '11',
+    section: 'B',
+    enrollmentDate: '2022-09-01',
+    status: 'active',
+    gpa: 3.9,
+    parentName: 'Bob Smith',
+    parentPhone: '(555) 234-5679',
+  },
+  {
+    id: '3',
+    studentId: 'STU003',
+    firstName: 'Mike',
+    lastName: 'Johnson',
+    email: 'mike.johnson@student.school.com',
+    phone: '(555) 345-6789',
+    grade: '12',
+    section: 'A',
+    enrollmentDate: '2021-09-01',
+    status: 'active',
+    gpa: 3.7,
+    parentName: 'Sarah Johnson',
+    parentPhone: '(555) 345-6790',
+  },
+  {
+    id: '4',
+    studentId: 'STU004',
+    firstName: 'Emma',
+    lastName: 'Wilson',
+    email: 'emma.wilson@student.school.com',
+    phone: '(555) 456-7890',
+    grade: '9',
+    section: 'C',
+    enrollmentDate: '2024-09-01',
+    status: 'active',
+    gpa: 4.0,
+    parentName: 'David Wilson',
+    parentPhone: '(555) 456-7891',
+  },
+  {
+    id: '5',
+    studentId: 'STU005',
+    firstName: 'James',
+    lastName: 'Brown',
+    email: 'james.brown@student.school.com',
+    phone: '(555) 567-8901',
+    grade: '12',
+    section: 'B',
+    enrollmentDate: '2021-09-01',
+    status: 'graduated',
+    gpa: 3.6,
+    parentName: 'Lisa Brown',
+    parentPhone: '(555) 567-8902',
+  },
 ];
 
-const StudentsPage = () => {
-  const { t, isClient } = useLanguage();
-  const [mounted, setMounted] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
-  const [studentsPerPage] = useState(8);
-  const [sortField, setSortField] = useState('name');
-  const [sortDirection, setSortDirection] = useState('asc');
-  const [students, setStudents] = useState(MOCK_STUDENTS);
+export default function StudentsPage() {
+  const { user } = useAuth();
+  const { t, language } = useLanguage();
+  const { addNotification } = useNotification();
 
-  // Only show the UI after first render to avoid hydration mismatch
-  useEffect(() => {
-    setMounted(true);
-    // In a real app, this would be an API call
-    setStudents(MOCK_STUDENTS);
-  }, []);
+  const [students] = useState<Student[]>(mockStudents);
+  const [filteredStudents, setFilteredStudents] = useState<Student[]>(mockStudents);
+  const [selectedStudents, setSelectedStudents] = useState<string[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filters, setFilters] = useState<Record<string, any>>({});
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
 
-  // Return a simplified version during SSR to avoid hydration mismatches
-  if (!mounted || !isClient) {
+  // Filter configuration
+  const filterGroups: FilterGroup[] = [
+    {
+      id: 'grade',
+      label: 'Grade',
+      type: 'select',
+      options: [
+        { id: '9', label: 'Grade 9', value: '9', count: 1 },
+        { id: '10', label: 'Grade 10', value: '10', count: 1 },
+        { id: '11', label: 'Grade 11', value: '11', count: 1 },
+        { id: '12', label: 'Grade 12', value: '12', count: 2 },
+      ],
+    },
+    {
+      id: 'section',
+      label: 'Section',
+      type: 'checkbox',
+      options: [
+        { id: 'A', label: 'Section A', value: 'A', count: 2 },
+        { id: 'B', label: 'Section B', value: 'B', count: 2 },
+        { id: 'C', label: 'Section C', value: 'C', count: 1 },
+      ],
+    },
+    {
+      id: 'status',
+      label: 'Status',
+      type: 'radio',
+      options: [
+        { id: 'active', label: 'Active', value: 'active', count: 4 },
+        { id: 'inactive', label: 'Inactive', value: 'inactive', count: 0 },
+        { id: 'graduated', label: 'Graduated', value: 'graduated', count: 1 },
+      ],
+    },
+    {
+      id: 'gpa',
+      label: 'GPA Range',
+      type: 'range',
+      min: 0,
+      max: 4,
+      step: 0.1,
+      defaultValue: 4,
+    },
+  ];
+
+  // Apply filters and search
+  const applyFiltersAndSearch = useMemo(() => {
+    let result = students;
+
+    // Apply search
+    if (searchQuery) {
+      result = result.filter(student =>
+        student.firstName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        student.lastName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        student.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        student.studentId.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
+    // Apply filters
+    if (filters.grade) {
+      result = result.filter(student => student.grade === filters.grade);
+    }
+
+    if (filters.section && filters.section.length > 0) {
+      result = result.filter(student => filters.section.includes(student.section));
+    }
+
+    if (filters.status) {
+      result = result.filter(student => student.status === filters.status);
+    }
+
+    if (filters.gpa !== undefined) {
+      result = result.filter(student => student.gpa <= filters.gpa);
+    }
+
+    return result;
+  }, [students, searchQuery, filters]);
+
+  React.useEffect(() => {
+    setFilteredStudents(applyFiltersAndSearch);
+  }, [applyFiltersAndSearch]);
+
+  // Data grid columns
+  const columns: Column<Student>[] = [
+    {
+      key: 'studentId',
+      header: 'Student ID',
+      cell: (student) => (
+        <span className="font-mono text-sm">{student.studentId}</span>
+      ),
+      sortable: true,
+    },
+    {
+      key: 'name',
+      header: 'Name',
+      cell: (student) => (
+        <div>
+          <div className="font-medium">{student.firstName} {student.lastName}</div>
+          <div className="text-sm text-gray-500">{student.email}</div>
+        </div>
+      ),
+      sortable: true,
+    },
+    {
+      key: 'grade',
+      header: 'Grade & Section',
+      cell: (student) => (
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400">
+          Grade {student.grade} - {student.section}
+        </span>
+      ),
+      sortable: true,
+    },
+    {
+      key: 'gpa',
+      header: 'GPA',
+      cell: (student) => (
+        <span className={`font-medium ${
+          student.gpa >= 3.5 ? 'text-green-600 dark:text-green-400' :
+          student.gpa >= 3.0 ? 'text-yellow-600 dark:text-yellow-400' :
+          'text-red-600 dark:text-red-400'
+        }`}>
+          {student.gpa.toFixed(1)}
+        </span>
+      ),
+      sortable: true,
+    },
+    {
+      key: 'status',
+      header: 'Status',
+      cell: (student) => (
+        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+          student.status === 'active' ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400' :
+          student.status === 'graduated' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400' :
+          'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400'
+        }`}>
+          {student.status.charAt(0).toUpperCase() + student.status.slice(1)}
+        </span>
+      ),
+      sortable: true,
+    },
+    {
+      key: 'actions',
+      header: 'Actions',
+      cell: (student) => (
+        <div className="flex items-center space-x-2">
+          <button
+            onClick={() => handleViewStudent(student)}
+            className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+            title="View Details"
+          >
+            <Eye className="h-4 w-4" />
+          </button>
+          <button
+            onClick={() => handleEditStudent(student)}
+            className="text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300"
+            title="Edit"
+          >
+            <Edit className="h-4 w-4" />
+          </button>
+          <button
+            onClick={() => handleDeleteStudent(student)}
+            className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
+            title="Delete"
+          >
+            <Trash2 className="h-4 w-4" />
+          </button>
+        </div>
+      ),
+    },
+  ];
+
+  // Event handlers
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+  };
+
+  const handleFilterChange = (filterId: string, value: any) => {
+    setFilters(prev => ({ ...prev, [filterId]: value }));
+  };
+
+  const handleClearFilters = () => {
+    setFilters({});
+  };
+
+  const handleSelectionChange = (keys: (string | number)[]) => {
+    setSelectedStudents(keys as string[]);
+  };
+
+  const handleBulkAction = (actionId: string, selectedItems: any[]) => {
+    addNotification({
+      type: 'info',
+      title: 'Bulk Action',
+      message: `Performed ${actionId} on ${selectedItems.length} students`,
+    });
+  };
+
+  const handleExport = (format: string, data: any[]) => {
+    addNotification({
+      type: 'success',
+      title: 'Export Started',
+      message: `Exporting ${data.length} students to ${format.toUpperCase()}`,
+    });
+  };
+
+  const handleViewStudent = (student: Student) => {
+    setSelectedStudent(student);
+    addNotification({
+      type: 'info',
+      title: 'Student Details',
+      message: `Viewing details for ${student.firstName} ${student.lastName}`,
+    });
+  };
+
+  const handleEditStudent = (student: Student) => {
+    setSelectedStudent(student);
+    setShowEditModal(true);
+  };
+
+  const handleDeleteStudent = (student: Student) => {
+    addNotification({
+      type: 'warning',
+      title: 'Delete Student',
+      message: `Are you sure you want to delete ${student.firstName} ${student.lastName}?`,
+    });
+  };
+
+  const handleAddStudent = () => {
+    setShowAddModal(true);
+  };
+
+  if (!user) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold">Students</h1>
-        </div>
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
-          <p>Loading students...</p>
-        </div>
+      <div className="min-h-screen flex items-center justify-center">
+        <p>Please sign in to access this page.</p>
       </div>
     );
   }
 
-  // Filter students based on search term
-  const filteredStudents = students.filter(student =>
-    student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    student.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    student.grade.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  // Sort students
-  const sortedStudents = [...filteredStudents].sort((a, b) => {
-    if (sortDirection === 'asc') {
-      return a[sortField] > b[sortField] ? 1 : -1;
-    } else {
-      return a[sortField] < b[sortField] ? 1 : -1;
-    }
-  });
-
-  // Pagination
-  const indexOfLastStudent = currentPage * studentsPerPage;
-  const indexOfFirstStudent = indexOfLastStudent - studentsPerPage;
-  const currentStudents = sortedStudents.slice(indexOfFirstStudent, indexOfLastStudent);
-  const totalPages = Math.ceil(sortedStudents.length / studentsPerPage);
-
-  // Handle sort
-  const handleSort = (field) => {
-    if (sortField === field) {
-      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
-    } else {
-      setSortField(field);
-      setSortDirection('asc');
-    }
-  };
-
   return (
-    <div className="container mx-auto px-4 py-8" suppressHydrationWarning>
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">{t('app.students')}</h1>
-        <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md flex items-center">
-          <Plus className="h-5 w-5 mr-2" />
-          {t('students.addStudent')}
-        </button>
-      </div>
-
-      {/* Search and Filter */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 mb-6">
-        <div className="relative">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <Search className="h-5 w-5 text-gray-400" />
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+      <div className="container mx-auto px-4 py-8">
+        {/* Header */}
+        <div className="flex justify-between items-center mb-8">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+              Student Management
+            </h1>
+            <p className="text-gray-600 dark:text-gray-400 mt-1">
+              Manage student records, grades, and information
+            </p>
           </div>
-          <input
-            type="text"
-            className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md leading-5 bg-white dark:bg-gray-900 placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-            placeholder={t('students.searchStudents')}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+          <SafeButton
+            onClick={handleAddStudent}
+            className="bg-blue-600 hover:bg-blue-700 text-white"
+          >
+            <UserPlus className="h-4 w-4 mr-2" />
+            Add Student
+          </SafeButton>
+        </div>
+
+        {/* Search and Filters */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-6">
+          <div className="lg:col-span-3">
+            <SearchInput
+              placeholder="Search students by name, email, or ID..."
+              onSearch={handleSearch}
+              className="w-full"
+            />
+          </div>
+          <div>
+            <FilterPanel
+              filters={filterGroups}
+              values={filters}
+              onChange={handleFilterChange}
+              onClear={handleClearFilters}
+            />
+          </div>
+        </div>
+
+        {/* Bulk Actions */}
+        {selectedStudents.length > 0 && (
+          <BulkActions
+            selectedItems={selectedStudents}
+            totalItems={filteredStudents.length}
+            onAction={handleBulkAction}
+            onSelectAll={() => setSelectedStudents(filteredStudents.map(s => s.id))}
+            onDeselectAll={() => setSelectedStudents([])}
+            className="mb-6"
+          />
+        )}
+
+        {/* Export Button */}
+        <div className="flex justify-end mb-4">
+          <ExportButton
+            data={filteredStudents}
+            filename="students"
+            onExport={handleExport}
+            formats={['csv', 'excel', 'pdf']}
           />
         </div>
-      </div>
 
-      {/* Students Table */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-            <thead className="bg-gray-50 dark:bg-gray-700">
-              <tr>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                  {t('students.name')}
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                  {t('students.grade')}
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                  {t('students.email')}
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                  {t('students.phone')}
-                </th>
-                <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                  {t('students.actions')}
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-              {currentStudents.map((student) => (
-                <tr key={student.id}>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900 dark:text-white">
-                      {student.name}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-500 dark:text-gray-300">
-                      {student.grade}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-500 dark:text-gray-300">
-                      {student.email}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-500 dark:text-gray-300">
-                      {student.phone}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <div className="flex justify-end space-x-2">
-                      <button className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300">
-                        <Eye className="h-5 w-5" />
-                      </button>
-                      <button className="text-yellow-600 hover:text-yellow-900 dark:text-yellow-400 dark:hover:text-yellow-300">
-                        <Edit className="h-5 w-5" />
-                      </button>
-                      <button className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300">
-                        <Trash2 className="h-5 w-5" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+        {/* Data Grid */}
+        <SafeDataGrid
+          data={filteredStudents}
+          columns={columns}
+          keyExtractor={(student) => student.id}
+          selectable
+          selectedKeys={selectedStudents}
+          onSelectionChange={handleSelectionChange}
+          sortable
+          paginated
+          pageSize={10}
+          emptyMessage="No students found"
+          className="bg-white dark:bg-gray-800 rounded-lg shadow"
+        />
 
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <div className="mt-6 flex justify-center">
-          <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
-            <button
-              onClick={() => setCurrentPage(currentPage > 1 ? currentPage - 1 : 1)}
-              disabled={currentPage === 1}
-              className={`relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium ${
-                currentPage === 1
-                  ? 'text-gray-300 dark:text-gray-600 cursor-not-allowed'
-                  : 'text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
-              }`}
-            >
-              <span className="sr-only">{t('common.previous')}</span>
-              <ChevronLeft className="h-5 w-5" aria-hidden="true" />
-            </button>
-            {[...Array(totalPages)].map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setCurrentPage(i + 1)}
-                className={`relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium ${
-                  currentPage === i + 1
-                    ? 'z-10 bg-blue-50 dark:bg-blue-900 border-blue-500 dark:border-blue-400 text-blue-600 dark:text-blue-200'
-                    : 'text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
-                }`}
+        {/* Add Student Modal */}
+        <SafeModal
+          isOpen={showAddModal}
+          onClose={() => setShowAddModal(false)}
+          title="Add New Student"
+          size="lg"
+        >
+          <div className="p-6">
+            <p>Add student form would go here...</p>
+            <div className="flex justify-end space-x-3 mt-6">
+              <SafeButton
+                variant="outline"
+                onClick={() => setShowAddModal(false)}
               >
-                {i + 1}
-              </button>
-            ))}
-            <button
-              onClick={() => setCurrentPage(currentPage < totalPages ? currentPage + 1 : totalPages)}
-              disabled={currentPage === totalPages}
-              className={`relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium ${
-                currentPage === totalPages
-                  ? 'text-gray-300 dark:text-gray-600 cursor-not-allowed'
-                  : 'text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
-              }`}
-            >
-              <span className="sr-only">{t('common.next')}</span>
-              <ChevronRight className="h-5 w-5" aria-hidden="true" />
-            </button>
-          </nav>
-        </div>
-      )}
+                Cancel
+              </SafeButton>
+              <SafeButton
+                onClick={() => {
+                  setShowAddModal(false);
+                  addNotification({
+                    type: 'success',
+                    title: 'Student Added',
+                    message: 'New student has been successfully added',
+                  });
+                }}
+              >
+                Add Student
+              </SafeButton>
+            </div>
+          </div>
+        </SafeModal>
+
+        {/* Edit Student Modal */}
+        <SafeModal
+          isOpen={showEditModal}
+          onClose={() => setShowEditModal(false)}
+          title="Edit Student"
+          size="lg"
+        >
+          <div className="p-6">
+            <p>Edit student form would go here...</p>
+            <div className="flex justify-end space-x-3 mt-6">
+              <SafeButton
+                variant="outline"
+                onClick={() => setShowEditModal(false)}
+              >
+                Cancel
+              </SafeButton>
+              <SafeButton
+                onClick={() => {
+                  setShowEditModal(false);
+                  addNotification({
+                    type: 'success',
+                    title: 'Student Updated',
+                    message: 'Student information has been successfully updated',
+                  });
+                }}
+              >
+                Save Changes
+              </SafeButton>
+            </div>
+          </div>
+        </SafeModal>
+      </div>
     </div>
   );
-};
-
-export default StudentsPage;
+}
