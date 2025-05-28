@@ -1,103 +1,77 @@
-import React from 'react';
-import Link from 'next/link';
+'use client';
+
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useRtl } from '@/hooks/useRtl';
-import LanguageSwitcher from '@/components/common/LanguageSwitcher';
-import { FaHome, FaUserGraduate, FaChalkboardTeacher, FaBook, FaCalendarAlt, FaClipboardList, FaUser } from 'react-icons/fa';
+import Header from './Header';
+import Sidebar from './Sidebar';
+import { useRouter } from 'next/navigation';
 
-type MainLayoutProps = {
+interface MainLayoutProps {
   children: React.ReactNode;
-};
+}
 
-const MainLayout = ({ children }: MainLayoutProps) => {
-  const { user, logout, isAuthenticated } = useAuth();
-  const { t, language } = useLanguage();
-  const rtl = useRtl();
+export default function MainLayout({ children }: MainLayoutProps) {
+  const { user, isAuthenticated } = useAuth();
+  const { language } = useLanguage();
+  const router = useRouter();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (mounted && !isAuthenticated) {
+      router.push('/login');
+    }
+  }, [isAuthenticated, mounted, router]);
+
+  const handleSidebarToggle = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
+
+  // Don't render anything until mounted to prevent hydration issues
+  if (!mounted) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+
+  // Show loading if not authenticated
+  if (!isAuthenticated || !user) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600 dark:text-gray-400">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="flex h-screen bg-gray-100" dir={rtl.dir}>
-      {/* Sidebar */}
-      <div className="w-64 bg-blue-800 text-white">
-        <div className="p-4">
-          <h1 className="text-2xl font-bold">{t('app.name')}</h1>
-        </div>
-        <nav className="mt-8">
-          <ul>
-            <li className="mb-2">
-              <Link href="/dashboard" className="flex items-center p-3 hover:bg-blue-700 transition-colors">
-                <FaHome className={rtl.margin('left', 3)} /> {t('app.dashboard')}
-              </Link>
-            </li>
-            <li className="mb-2">
-              <Link href="/students" className="flex items-center p-3 hover:bg-blue-700 transition-colors">
-                <FaUserGraduate className={rtl.margin('left', 3)} /> {t('app.students')}
-              </Link>
-            </li>
-            <li className="mb-2">
-              <Link href="/teachers" className="flex items-center p-3 hover:bg-blue-700 transition-colors">
-                <FaChalkboardTeacher className={rtl.margin('left', 3)} /> {t('app.teachers')}
-              </Link>
-            </li>
-            <li className="mb-2">
-              <Link href="/courses" className="flex items-center p-3 hover:bg-blue-700 transition-colors">
-                <FaBook className={rtl.margin('left', 3)} /> {t('app.courses')}
-              </Link>
-            </li>
-            <li className="mb-2">
-              <Link href="/schedule" className="flex items-center p-3 hover:bg-blue-700 transition-colors">
-                <FaCalendarAlt className={rtl.margin('left', 3)} /> {t('app.schedule')}
-              </Link>
-            </li>
-            <li className="mb-2">
-              <Link href="/attendance" className="flex items-center p-3 hover:bg-blue-700 transition-colors">
-                <FaClipboardList className={rtl.margin('left', 3)} /> {t('app.attendance')}
-              </Link>
-            </li>
-          </ul>
-        </nav>
-      </div>
+    <div className={`min-h-screen bg-gray-50 dark:bg-gray-900 ${language === 'ar' ? 'rtl' : 'ltr'}`}>
+      <div className="flex h-screen overflow-hidden">
+        {/* Sidebar */}
+        <Sidebar isOpen={sidebarOpen} onToggle={handleSidebarToggle} />
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Header */}
-        <header className="bg-white shadow-sm">
-          <div className="flex items-center justify-between p-4">
-            <h2 className="text-xl font-semibold">{t('app.name')}</h2>
-            <div className="flex items-center gap-4">
-              <LanguageSwitcher />
-              {isAuthenticated ? (
-                <div className={`flex items-center gap-4 ${rtl.flexDirection()}`}>
-                  <div className="flex items-center">
-                    <FaUser className={rtl.margin('left', 2)} />
-                    <span>{user?.email}</span>
-                  </div>
-                  <button
-                    onClick={() => logout()}
-                    className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
-                  >
-                    {t('app.signOut')}
-                  </button>
-                </div>
-              ) : (
-                <Link
-                  href="/login"
-                  className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-                >
-                  {t('app.signIn')}
-                </Link>
-              )}
+        {/* Main Content */}
+        <div className="flex-1 flex flex-col overflow-hidden">
+          {/* Header */}
+          <Header onMenuToggle={handleSidebarToggle} />
+
+          {/* Page Content */}
+          <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 dark:bg-gray-900">
+            <div className="container mx-auto px-4 py-8">
+              {children}
             </div>
-          </div>
-        </header>
-
-        {/* Content */}
-        <main className="flex-1 overflow-y-auto p-6 bg-gray-100">
-          {children}
-        </main>
+          </main>
+        </div>
       </div>
     </div>
   );
-};
-
-export default MainLayout;
+}
